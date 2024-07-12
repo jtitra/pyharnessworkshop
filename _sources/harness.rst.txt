@@ -1,0 +1,15 @@
+harness package
+==========================
+
+Module contents
+---------------
+
+.. automodule:: pyharnessworkshop.harness.chaos
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pyharnessworkshop.harness.platform
+   :members:
+   :undoc-members:
+   :show-inheritance:

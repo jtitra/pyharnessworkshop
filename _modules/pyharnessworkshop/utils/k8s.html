@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyharnessworkshop.utils.k8s &mdash; pyharnessworkshop 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyharnessworkshop
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">harness package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">keycloak package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyharnessworkshop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyharnessworkshop.utils.k8s</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyharnessworkshop.utils.k8s</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2024 Harness Solutions Engineering.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">kubernetes</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">run_command</span>
+
+<span class="c1"># PYDOC_RETURN_LABEL = &quot;:return:&quot;</span>
+<span class="c1"># PYDOC_FOLLOW_PARAM = &quot;:param bool follow:&quot;</span>
+
+
+<div class="viewcode-block" id="add_k8s_service_to_hosts">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts">[docs]</a>
+<span class="k">def</span> <span class="nf">add_k8s_service_to_hosts</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">hostname</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a Kubernetes service IP to the /etc/hosts file.</span>
+
+<span class="sd">    :param service_name: The name of the Kubernetes service.</span>
+<span class="sd">    :param namespace: The namespace of the Kubernetes service.</span>
+<span class="sd">    :param hostname: The hostname to map to the service IP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">retries</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">retry_delay</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># seconds</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding &#39;</span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">&#39; to the hosts file.&quot;</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">retries</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
+        <span class="n">ip_address</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kubectl get service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> -n </span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2"> -o=jsonpath=&#39;</span><span class="se">{{</span><span class="s2">.status.loadBalancer.ingress[0].ip</span><span class="se">}}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ip_address</span> <span class="ow">and</span> <span class="n">ip_address</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;none&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully retrieved IP address: </span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="n">retries</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">retries</span> <span class="o">==</span> <span class="n">max_retries</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to retrieve IP for service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> in namespace </span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2"> after </span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2"> attempts.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrying in </span><span class="si">{</span><span class="n">retry_delay</span><span class="si">}</span><span class="s2"> seconds... (</span><span class="si">{</span><span class="n">retries</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">retry_delay</span><span class="p">)</span>
+
+    <span class="c1"># Update /etc/hosts</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/etc/hosts&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">hosts_content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/etc/hosts&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">hosts_content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hostname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="s2"> with IP </span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s2"> to /etc/hosts&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_k8s_loadbalancer_ip">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.get_k8s_loadbalancer_ip">[docs]</a>
+<span class="k">def</span> <span class="nf">get_k8s_loadbalancer_ip</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">max_attempts</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the external IP of a Kubernetes LoadBalancer service.</span>
+
+<span class="sd">    :param service_name: The name of the Kubernetes service.</span>
+<span class="sd">    :param namespace: The namespace of the Kubernetes service. Default is &#39;default&#39;.</span>
+<span class="sd">    :param max_attempts: The maximum number of attempts to get the IP. Default is 15.</span>
+<span class="sd">    :return: The external IP address of the LoadBalancer service.</span>
+<span class="sd">    :raises SystemExit: If the IP address could not be retrieved within the maximum attempts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for LoadBalancer IP for service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">sleep_time</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">CoreV1Api</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_attempts</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">service</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">read_namespaced_service</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">service</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">load_balancer</span><span class="o">.</span><span class="n">ingress</span><span class="p">:</span>
+                <span class="n">external_ip</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">load_balancer</span><span class="o">.</span><span class="n">ingress</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ip</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempt </span><span class="si">{</span><span class="n">attempt</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2">:: Found IP </span><span class="si">{</span><span class="n">external_ip</span><span class="si">}</span><span class="s2"> for service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">external_ip</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempt </span><span class="si">{</span><span class="n">attempt</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2">:: No ingress IP found for service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">. Retrying in </span><span class="si">{</span><span class="n">sleep_time</span><span class="si">}</span><span class="s2"> seconds...&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">client</span><span class="o">.</span><span class="n">ApiException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempt </span><span class="si">{</span><span class="n">attempt</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2">:: Failed to get service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to get LoadBalancer IP for service </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> after </span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2"> attempts.&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="render_manifest_from_template">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.render_manifest_from_template">[docs]</a>
+<span class="k">def</span> <span class="nf">render_manifest_from_template</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">apps_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Renders a Kubernetes manifest from a template by replacing placeholders with actual values.</span>
+
+<span class="sd">    :param template_file: The path to the template file.</span>
+<span class="sd">    :param output_path: The path where the rendered manifest will be saved.</span>
+<span class="sd">    :param apps_string: A comma-separated string of app details in the format &#39;app_name:app_port:ip_address&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">replace_values</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">app_port</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replaces placeholders in the template file with actual values and writes to the output file.</span>
+
+<span class="sd">        :param template_file: The path to the template file.</span>
+<span class="sd">        :param output_file: The path to the output file.</span>
+<span class="sd">        :param app_name: The application name to replace in the template.</span>
+<span class="sd">        :param app_port: The application port to replace in the template.</span>
+<span class="sd">        :param ip_address: The IP address to replace in the template.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{ APP_NAME }}&quot;</span><span class="p">,</span> <span class="n">app_name</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{ APP_PORT }}&quot;</span><span class="p">,</span> <span class="n">app_port</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{ HOSTNAME }}&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST_NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{ PARTICIPANT_ID }}&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;INSTRUQT_PARTICIPANT_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{ IP_ADDRESS }}&quot;</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="n">apps</span> <span class="o">=</span> <span class="n">apps_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">apps</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rendering template for </span><span class="si">{</span><span class="n">app</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">app_name</span><span class="p">,</span> <span class="n">app_port</span><span class="p">,</span> <span class="n">ip_address</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nginx-</span><span class="si">{</span><span class="n">app_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span><span class="p">)</span>
+        <span class="n">replace_values</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">app_port</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="apply_k8s_manifests">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.apply_k8s_manifests">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_k8s_manifests</span><span class="p">(</span><span class="n">manifests</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Kubernetes manifests.</span>
+
+<span class="sd">    :param manifests: The path to the manifests file(s).</span>
+<span class="sd">    :param namespace: The namespace for the Kubernetes secret. Default is &#39;default&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k8s_client</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ApiClient</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">manifest</span> <span class="ow">in</span> <span class="n">manifests</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">create_from_yaml</span><span class="p">(</span><span class="n">k8s_client</span><span class="p">,</span> <span class="n">manifest</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="n">namespace</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wait_for_kubernetes_api">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.wait_for_kubernetes_api">[docs]</a>
+<span class="k">def</span> <span class="nf">wait_for_kubernetes_api</span><span class="p">(</span><span class="n">k8s_api</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enables bash completion for kubectl.</span>
+<span class="sd">    Waits for the Kubernetes API server to become available.</span>
+
+<span class="sd">    :param k8s_api: The URL of the Kubernetes API server. (e.g., &#39;http://localhost:8001/api&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">run_command</span><span class="p">(</span><span class="s1">&#39;echo &quot;source /usr/share/bash-completion/bash_completion&quot; &gt;&gt; /root/.bashrc&#39;</span><span class="p">)</span>
+    <span class="n">run_command</span><span class="p">(</span><span class="s1">&#39;echo &quot;complete -F __start_kubectl k&quot; &gt;&gt; /root/.bashrc&#39;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k8s_api</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kubernetes API server is available.&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Waiting for the Kubernetes API server to become available...&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_k8s_secret">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.k8s.create_k8s_secret">[docs]</a>
+<span class="k">def</span> <span class="nf">create_k8s_secret</span><span class="p">(</span><span class="n">secret_name</span><span class="p">,</span> <span class="n">secret_data</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create Kubernetes secret.</span>
+
+<span class="sd">    :param secret_name: The name of the Kubernetes secret to create.</span>
+<span class="sd">    :param namespace: The namespace for the Kubernetes secret. Default is &#39;default&#39;.</span>
+<span class="sd">    :raises SystemExit: If the secret could not be created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating secret &#39;</span><span class="si">{</span><span class="n">secret_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">CoreV1Api</span><span class="p">()</span>
+    <span class="n">secret</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">V1Secret</span><span class="p">(</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">V1ObjectMeta</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">secret_name</span><span class="p">),</span>
+        <span class="n">string_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">secret_data</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">v1</span><span class="o">.</span><span class="n">create_namespaced_secret</span><span class="p">(</span><span class="n">namespace</span><span class="o">=</span><span class="n">namespace</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">client</span><span class="o">.</span><span class="n">ApiException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">409</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception when creating secret: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Joe Titra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

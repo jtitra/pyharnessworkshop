@@ -1,0 +1,10 @@
+pyharnessworkshop package
+==========================
+
+Module contents
+---------------
+
+.. automodule:: pyharnessworkshop
+   :members:
+   :undoc-members:
+   :show-inheritance:

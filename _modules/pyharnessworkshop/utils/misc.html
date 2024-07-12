@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyharnessworkshop.utils.misc &mdash; pyharnessworkshop 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyharnessworkshop
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">harness package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">keycloak package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyharnessworkshop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyharnessworkshop.utils.misc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyharnessworkshop.utils.misc</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2024 Harness Solutions Engineering.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pwd</span>
+<span class="kn">import</span> <span class="nn">grp</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># PYDOC_RETURN_LABEL = &quot;:return:&quot;</span>
+<span class="c1"># PYDOC_FOLLOW_PARAM = &quot;:param bool follow:&quot;</span>
+
+
+<div class="viewcode-block" id="setup_vs_code">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.setup_vs_code">[docs]</a>
+<span class="k">def</span> <span class="nf">setup_vs_code</span><span class="p">(</span><span class="n">service_port</span><span class="p">,</span> <span class="n">code_server_directory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets up VS Code server by downloading, installing, and configuring it.</span>
+
+<span class="sd">    :param service_port: The port on which the VS Code server will run.</span>
+<span class="sd">    :param code_server_directory: The directory where the VS Code server will store its files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">download_and_install</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads and installs VS Code server from the official repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/cdr/code-server/main/install.sh&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/install.sh&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="s2">&quot;/tmp/install.sh&quot;</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/install.sh&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Check if VS Code is already installed</span>
+    <span class="k">if</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;which&quot;</span><span class="p">,</span> <span class="s2">&quot;code-server&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;VS Code already installed.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing VS Code...&quot;</span><span class="p">)</span>
+        <span class="n">download_and_install</span><span class="p">()</span>
+
+    <span class="c1"># Setup VS Code</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;/home/harness/.local/share/code-server/User/&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span>
+        <span class="s2">&quot;/home/harness/.local/share&quot;</span><span class="p">,</span>
+        <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pw_uid</span><span class="p">,</span>
+        <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">gr_gid</span>
+    <span class="p">)</span>
+
+    <span class="n">settings_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/settings.json&quot;</span>
+    <span class="n">settings_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">settings_url</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/home/harness/.local/share/code-server/User/settings.json&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">settings_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="n">service_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/code-server.service&quot;</span>
+    <span class="n">service_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_url</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/etc/systemd/system/code-server.service&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">service_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="c1"># Update VS Code service</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/etc/systemd/system/code-server.service&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">service_content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">service_content</span> <span class="o">=</span> <span class="n">service_content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;EXAMPLEPORT&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">service_port</span><span class="p">))</span>
+    <span class="n">service_content</span> <span class="o">=</span> <span class="n">service_content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;EXAMPLEDIRECTORY&quot;</span><span class="p">,</span> <span class="n">code_server_directory</span><span class="p">)</span>
+
+    <span class="n">create_systemd_service</span><span class="p">(</span><span class="n">service_content</span><span class="p">,</span> <span class="s2">&quot;code-server&quot;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;code-server&quot;</span><span class="p">,</span> <span class="s2">&quot;--install-extension&quot;</span><span class="p">,</span> <span class="s2">&quot;hashicorp.terraform&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_credentials_html">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.generate_credentials_html">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_credentials_html</span><span class="p">(</span><span class="n">credentials</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches the HTML template from a URL, populates it with credentials, and returns the generated HTML content.</span>
+
+<span class="sd">    :param credentials: List of credentials to populate the template</span>
+<span class="sd">    :return: Rendered HTML content as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/credential_tab_template.html&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Fetch the HTML template from the URL</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">template_url</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">html_template</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        
+        <span class="c1"># Create a Jinja2 Template instance</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">html_template</span><span class="p">)</span>
+        
+        <span class="c1"># Render the template with the credentials data</span>
+        <span class="n">rendered_html</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">rendered_html</span>
+    
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching the template: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="create_systemd_service">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.create_systemd_service">[docs]</a>
+<span class="k">def</span> <span class="nf">create_systemd_service</span><span class="p">(</span><span class="n">service_content</span><span class="p">,</span> <span class="n">service_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a systemd service file and enables it to start on boot.</span>
+
+<span class="sd">    :param service_content: The content to populate the .service file.</span>
+<span class="sd">    :param service_name: The name of the service to create.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">service_file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/etc/systemd/system/</span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2">.service&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">service_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">service_file</span><span class="p">:</span>
+        <span class="n">service_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">service_content</span><span class="p">)</span>
+
+    <span class="c1"># Reload systemd and enable the service</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;systemctl&quot;</span><span class="p">,</span> <span class="s2">&quot;daemon-reload&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;systemctl&quot;</span><span class="p">,</span> <span class="s2">&quot;enable&quot;</span><span class="p">,</span> <span class="n">service_name</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;systemctl&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="n">service_name</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_command">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.run_command">[docs]</a>
+<span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs a shell command and prints success or failure message.</span>
+
+<span class="sd">    :param command: The command to run.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; executed successfully.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to execute command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_random_suffix">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.generate_random_suffix">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_random_suffix</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a random suffix by hashing a random number and taking the first 10 characters.</span>
+
+<span class="sd">    :return: A random suffix string of 10 characters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">random_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32767</span><span class="p">)</span>
+    <span class="n">md5_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">random_number</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="n">random_suffix</span> <span class="o">=</span> <span class="n">md5_hash</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">random_suffix</span></div>
+
+
+
+<div class="viewcode-block" id="generate_gke_credentials">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.generate_gke_credentials">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_gke_credentials</span><span class="p">(</span><span class="n">generator_uri</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate GKE cluster credentials and output to file.</span>
+
+<span class="sd">    :param generator_uri: The URL of the GKE Generator API server.</span>
+<span class="sd">    :param user_name: The user to generate an env/namespace for.</span>
+<span class="sd">    :param output_file: The file to create for the new kubeconfig yaml.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting GKE cluster credentials...&quot;</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user_name</span><span class="p">})</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">generator_uri</span><span class="si">}</span><span class="s2">/create-user&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">},</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="revoke_gke_credentials">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.revoke_gke_credentials">[docs]</a>
+<span class="k">def</span> <span class="nf">revoke_gke_credentials</span><span class="p">(</span><span class="n">generator_uri</span><span class="p">,</span> <span class="n">user_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Revoke GKE cluster credentials.</span>
+
+<span class="sd">    :param generator_uri: The URL of the GKE Generator API server.</span>
+<span class="sd">    :param user_name: The user to revoke an env/namespace for.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Revoking GKE cluster credentials...&quot;</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user_name</span><span class="p">})</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">generator_uri</span><span class="si">}</span><span class="s2">/delete-user&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">},</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_yaml_content">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.validate_yaml_content">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_yaml_content</span><span class="p">(</span><span class="n">yaml_content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates provided YAML data.</span>
+
+<span class="sd">    :param yaml_content: The YAML data to validate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">yaml_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load_all</span><span class="p">(</span><span class="n">yaml_content</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Valid YAML provided.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">yaml_data</span>
+    <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ERROR: The provided YAML is not valid.&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Joe Titra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

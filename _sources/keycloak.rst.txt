@@ -1,0 +1,15 @@
+keycloak package
+==========================
+
+Module contents
+---------------
+
+.. automodule:: pyharnessworkshop.keycloak.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pyharnessworkshop.keycloak.user
+   :members:
+   :undoc-members:
+   :show-inheritance:

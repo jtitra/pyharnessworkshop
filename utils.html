@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils package &mdash; pyharnessworkshop 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=59fadc99"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="keycloak package" href="keycloak.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyharnessworkshop
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="harness.html">harness package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keycloak.html">keycloak package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.instruqt">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.get_agent_variable"><code class="docutils literal notranslate"><span class="pre">get_agent_variable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.raise_lab_failure_message"><code class="docutils literal notranslate"><span class="pre">raise_lab_failure_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.set_agent_variable"><code class="docutils literal notranslate"><span class="pre">set_agent_variable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts"><code class="docutils literal notranslate"><span class="pre">add_k8s_service_to_hosts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.apply_k8s_manifests"><code class="docutils literal notranslate"><span class="pre">apply_k8s_manifests()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.create_k8s_secret"><code class="docutils literal notranslate"><span class="pre">create_k8s_secret()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.get_k8s_loadbalancer_ip"><code class="docutils literal notranslate"><span class="pre">get_k8s_loadbalancer_ip()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.render_manifest_from_template"><code class="docutils literal notranslate"><span class="pre">render_manifest_from_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.wait_for_kubernetes_api"><code class="docutils literal notranslate"><span class="pre">wait_for_kubernetes_api()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.create_systemd_service"><code class="docutils literal notranslate"><span class="pre">create_systemd_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_credentials_html"><code class="docutils literal notranslate"><span class="pre">generate_credentials_html()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_gke_credentials"><code class="docutils literal notranslate"><span class="pre">generate_gke_credentials()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_random_suffix"><code class="docutils literal notranslate"><span class="pre">generate_random_suffix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.revoke_gke_credentials"><code class="docutils literal notranslate"><span class="pre">revoke_gke_credentials()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.setup_vs_code"><code class="docutils literal notranslate"><span class="pre">setup_vs_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.validate_yaml_content"><code class="docutils literal notranslate"><span class="pre">validate_yaml_content()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyharnessworkshop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utils-package">
+<h1>utils package<a class="headerlink" href="#utils-package" title="Link to this heading"></a></h1>
+<section id="module-pyharnessworkshop.utils.instruqt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyharnessworkshop.utils.instruqt" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.instruqt.get_agent_variable">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.instruqt.</span></span><span class="sig-name descname"><span class="pre">get_agent_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/instruqt.html#get_agent_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.instruqt.get_agent_variable" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the value of a specified variable using the ‘agent variable get’ command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>variable_name</strong> – The name of the variable to retrieve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the specified variable as a string, or None if an error occurs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.instruqt.raise_lab_failure_message">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.instruqt.</span></span><span class="sig-name descname"><span class="pre">raise_lab_failure_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/instruqt.html#raise_lab_failure_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.instruqt.raise_lab_failure_message" title="Link to this definition"></a></dt>
+<dd><p>Presents the user with a failure message after they’ve clicked the ‘Check’ button.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_text</strong> – The error/failure message to display to the workshop user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.instruqt.set_agent_variable">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.instruqt.</span></span><span class="sig-name descname"><span class="pre">set_agent_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/instruqt.html#set_agent_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.instruqt.set_agent_variable" title="Link to this definition"></a></dt>
+<dd><p>Sets the value of a specified variable using the ‘agent variable set’ command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable_name</strong> – The name of the variable to set.</p></li>
+<li><p><strong>variable_value</strong> – The value of the variable to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-pyharnessworkshop.utils.k8s">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">add_k8s_service_to_hosts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#add_k8s_service_to_hosts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts" title="Link to this definition"></a></dt>
+<dd><p>Adds a Kubernetes service IP to the /etc/hosts file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_name</strong> – The name of the Kubernetes service.</p></li>
+<li><p><strong>namespace</strong> – The namespace of the Kubernetes service.</p></li>
+<li><p><strong>hostname</strong> – The hostname to map to the service IP.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.apply_k8s_manifests">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">apply_k8s_manifests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifests</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#apply_k8s_manifests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.apply_k8s_manifests" title="Link to this definition"></a></dt>
+<dd><p>Apply Kubernetes manifests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>manifests</strong> – The path to the manifests file(s).</p></li>
+<li><p><strong>namespace</strong> – The namespace for the Kubernetes secret. Default is ‘default’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.create_k8s_secret">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">create_k8s_secret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secret_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#create_k8s_secret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.create_k8s_secret" title="Link to this definition"></a></dt>
+<dd><p>Create Kubernetes secret.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secret_name</strong> – The name of the Kubernetes secret to create.</p></li>
+<li><p><strong>namespace</strong> – The namespace for the Kubernetes secret. Default is ‘default’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SystemExit</strong> – If the secret could not be created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.get_k8s_loadbalancer_ip">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">get_k8s_loadbalancer_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_attempts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#get_k8s_loadbalancer_ip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.get_k8s_loadbalancer_ip" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the external IP of a Kubernetes LoadBalancer service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_name</strong> – The name of the Kubernetes service.</p></li>
+<li><p><strong>namespace</strong> – The namespace of the Kubernetes service. Default is ‘default’.</p></li>
+<li><p><strong>max_attempts</strong> – The maximum number of attempts to get the IP. Default is 15.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The external IP address of the LoadBalancer service.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SystemExit</strong> – If the IP address could not be retrieved within the maximum attempts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.render_manifest_from_template">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">render_manifest_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apps_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#render_manifest_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.render_manifest_from_template" title="Link to this definition"></a></dt>
+<dd><p>Renders a Kubernetes manifest from a template by replacing placeholders with actual values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template_file</strong> – The path to the template file.</p></li>
+<li><p><strong>output_path</strong> – The path where the rendered manifest will be saved.</p></li>
+<li><p><strong>apps_string</strong> – A comma-separated string of app details in the format ‘app_name:app_port:ip_address’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.wait_for_kubernetes_api">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">wait_for_kubernetes_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k8s_api</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#wait_for_kubernetes_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.wait_for_kubernetes_api" title="Link to this definition"></a></dt>
+<dd><p>Enables bash completion for kubectl.
+Waits for the Kubernetes API server to become available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k8s_api</strong> – The URL of the Kubernetes API server. (e.g., ‘<a class="reference external" href="http://localhost:8001/api">http://localhost:8001/api</a>’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-pyharnessworkshop.utils.misc">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.create_systemd_service">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">create_systemd_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#create_systemd_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.create_systemd_service" title="Link to this definition"></a></dt>
+<dd><p>Creates a systemd service file and enables it to start on boot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_content</strong> – The content to populate the .service file.</p></li>
+<li><p><strong>service_name</strong> – The name of the service to create.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_credentials_html">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_credentials_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_credentials_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_credentials_html" title="Link to this definition"></a></dt>
+<dd><p>Fetches the HTML template from a URL, populates it with credentials, and returns the generated HTML content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>credentials</strong> – List of credentials to populate the template</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rendered HTML content as a string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_gke_credentials">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_gke_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_gke_credentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_gke_credentials" title="Link to this definition"></a></dt>
+<dd><p>Generate GKE cluster credentials and output to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator_uri</strong> – The URL of the GKE Generator API server.</p></li>
+<li><p><strong>user_name</strong> – The user to generate an env/namespace for.</p></li>
+<li><p><strong>output_file</strong> – The file to create for the new kubeconfig yaml.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_random_suffix">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_random_suffix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_random_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_random_suffix" title="Link to this definition"></a></dt>
+<dd><p>Generates a random suffix by hashing a random number and taking the first 10 characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A random suffix string of 10 characters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.revoke_gke_credentials">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">revoke_gke_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#revoke_gke_credentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.revoke_gke_credentials" title="Link to this definition"></a></dt>
+<dd><p>Revoke GKE cluster credentials.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator_uri</strong> – The URL of the GKE Generator API server.</p></li>
+<li><p><strong>user_name</strong> – The user to revoke an env/namespace for.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.run_command">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.run_command" title="Link to this definition"></a></dt>
+<dd><p>Runs a shell command and prints success or failure message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>command</strong> – The command to run.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.setup_vs_code">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">setup_vs_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_server_directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#setup_vs_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.setup_vs_code" title="Link to this definition"></a></dt>
+<dd><p>Sets up VS Code server by downloading, installing, and configuring it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_port</strong> – The port on which the VS Code server will run.</p></li>
+<li><p><strong>code_server_directory</strong> – The directory where the VS Code server will store its files.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.validate_yaml_content">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">validate_yaml_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#validate_yaml_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.validate_yaml_content" title="Link to this definition"></a></dt>
+<dd><p>Validates provided YAML data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_content</strong> – The YAML data to validate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="keycloak.html" class="btn btn-neutral float-left" title="keycloak package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Joe Titra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

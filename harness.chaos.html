@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>harness.chaos package &mdash; pyharnessworkshop 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=59fadc99"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="harness.platform package" href="harness.platform.html" />
+    <link rel="prev" title="Welcome to pyharnessworkshop’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyharnessworkshop
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">harness.chaos package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.harness.chaos">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.add_probe"><code class="docutils literal notranslate"><span class="pre">add_probe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.generate_hce_id"><code class="docutils literal notranslate"><span class="pre">generate_hce_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.get_manifest_for_infra"><code class="docutils literal notranslate"><span class="pre">get_manifest_for_infra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.make_api_call"><code class="docutils literal notranslate"><span class="pre">make_api_call()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.register_infra"><code class="docutils literal notranslate"><span class="pre">register_infra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.supported_api_methods"><code class="docutils literal notranslate"><span class="pre">supported_api_methods()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="harness.platform.html">harness.platform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keycloak.html">keycloak package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyharnessworkshop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">harness.chaos package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/harness.chaos.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="harness-chaos-package">
+<h1>harness.chaos package<a class="headerlink" href="#harness-chaos-package" title="Link to this heading"></a></h1>
+<section id="module-pyharnessworkshop.harness.chaos">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyharnessworkshop.harness.chaos" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.add_probe">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">add_probe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#add_probe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.add_probe" title="Link to this definition"></a></dt>
+<dd><p>Adds a probe to the specified infrastructure using the Chaos API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The access token for authentication</p></li>
+<li><p><strong>account_id</strong> – The account identifier</p></li>
+<li><p><strong>org_id</strong> – The organization identifier</p></li>
+<li><p><strong>project_id</strong> – The project identifier</p></li>
+<li><p><strong>name</strong> – The name of the probe</p></li>
+<li><p><strong>properties</strong> – Optional dictionary of properties to configure the probe. Defaults are used if not provided.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the Chaos API as a JSON object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.generate_hce_id">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">generate_hce_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#generate_hce_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.generate_hce_id" title="Link to this definition"></a></dt>
+<dd><p>Generates a probe ID based on the provided name by replacing spaces with underscores and removing dashes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name to be used for generating the probe ID</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated probe ID as a string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.get_manifest_for_infra">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">get_manifest_for_infra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#get_manifest_for_infra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.get_manifest_for_infra" title="Link to this definition"></a></dt>
+<dd><p>Creates a manifest file for the chaos infrastructure specified using the Chaos API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The access token for authentication</p></li>
+<li><p><strong>account_id</strong> – The account identifier</p></li>
+<li><p><strong>org_id</strong> – The organization identifier</p></li>
+<li><p><strong>project_id</strong> – The project identifier</p></li>
+<li><p><strong>name</strong> – The name of the chaos infrastructure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.make_api_call">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">make_api_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#make_api_call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.make_api_call" title="Link to this definition"></a></dt>
+<dd><p>Makes an API call to the Chaos API with the specified query type and variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The access token for authentication</p></li>
+<li><p><strong>account_id</strong> – The account identifier</p></li>
+<li><p><strong>org_id</strong> – The organization identifier</p></li>
+<li><p><strong>project_id</strong> – The project identifier</p></li>
+<li><p><strong>query_type</strong> – The type of query to be executed (e.g., ‘register_infra’, ‘add_probe’)</p></li>
+<li><p><strong>request_variables</strong> – The variables to be included in the request payload</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the Chaos API as a JSON object</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SystemError</strong> – If an HTTP error or other error occurs during the API call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.register_infra">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">register_infra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#register_infra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.register_infra" title="Link to this definition"></a></dt>
+<dd><p>Registers infrastructure with the specified details using the Chaos API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The access token for authentication</p></li>
+<li><p><strong>account_id</strong> – The account identifier</p></li>
+<li><p><strong>org_id</strong> – The organization identifier</p></li>
+<li><p><strong>project_id</strong> – The project identifier</p></li>
+<li><p><strong>name</strong> – The name of the chaos infrastructure</p></li>
+<li><p><strong>env_id</strong> – The environment identifier the chaos infrastructure will be enabled in</p></li>
+<li><p><strong>properties</strong> – Optional dictionary of properties to configure the infrastructure. Defaults are used if not provided.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the Chaos API as a JSON object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.supported_api_methods">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">supported_api_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#supported_api_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.supported_api_methods" title="Link to this definition"></a></dt>
+<dd><p>Returns the query data for the specified request type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request_type</strong> – The type of request (e.g., ‘register_infra’, ‘add_probe’)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the mutation, request type, and return fields for the specified request type</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the request type is unsupported</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pyharnessworkshop’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="harness.platform.html" class="btn btn-neutral float-right" title="harness.platform package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Joe Titra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
