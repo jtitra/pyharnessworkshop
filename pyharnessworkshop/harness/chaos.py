@@ -32,57 +32,91 @@ def generate_hce_id(name):
     return name.replace(" ", "_").replace("-", "")
 
 
-def supported_api_methods(request_type):
+def supported_api_methods(request_type, account_id, org_id, project_id, request_variables=None):
     """
-    Returns the query data for the specified request type.
+    Returns the payload for the specified request type.
 
-    :param request_type: The type of request (e.g., 'register_infra', 'add_probe')
-    :return: A dictionary containing the mutation, request type, and return fields for the specified request type
+    :param request_type: The type of request (e.g., 'register_infra', 'add_probe', 'stop_all_chaos')
+    :param account_id: The account identifier
+    :param org_id: The organization identifier
+    :param project_id: The project identifier
+    :param request_variables: The variables to be included in the request payload
+    :return: A dictionary containing the complete payload for the specified request type
     :raises ValueError: If the request type is unsupported
     """
+    if request_variables is None:
+        request_variables = {}
+
     match request_type:
         case "register_infra":
-            return {
+            query_data = {
                 "operation": "mutation",
                 "type": "registerInfra",
-                "param": {
-                    "key": "request",
-                    "value": "RegisterInfraRequest!"
-                },
+                "variables": {"key": "request", "value": "RegisterInfraRequest!"},
                 "return": "{ manifest }"
             }
         case "add_probe":
-            return {
+            query_data = {
                 "operation": "mutation",
                 "type": "addProbe",
-                "param": {
-                    "key": "request",
-                    "value": "ProbeRequest!"
-                },
+                "variables": {"key": "request", "value": "ProbeRequest!"},
                 "return": "{ name type }"
             }
         case "list_infra":
-            return {
+            query_data = {
                 "operation": "query",
                 "type": "listInfrasV2",
-                "param": {
-                    "key": "request",
-                    "value": "ListInfraRequest"
-                },
+                "variables": {"key": "request", "value": "ListInfraRequest"},
                 "return": "{ totalNoOfInfras infras {infraID name environmentID platformName infraNamespace serviceAccount infraScope installationType} }"
             }
         case "get_infra_manifest":
-            return {
+            query_data = {
                 "operation": "query",
                 "type": "getInfraManifest",
-                "param": {
-                    "key": "infraID",
-                    "value": "String!"
-                },
+                "variables": {"key": "infraID", "value": "String!"},
+                "return": ""
+            }
+        case "stop_all_chaos":
+            query_data = {
+                "operation": "mutation",
+                "type": "stopAllWorkflowRuns",
+                "variables": {},
                 "return": ""
             }
         case _:
             raise ValueError(f"Unsupported request type: {request_type}")
+
+    identifiers = {
+        "accountIdentifier": account_id,
+        "orgIdentifier": org_id,
+        "projectIdentifier": project_id
+    }
+
+    if query_data["variables"] == {}:
+        query = f"""
+        {query_data['operation']} {query_data['type']}($identifiers: IdentifiersRequest!) {{
+            {query_data['type']}(identifiers: $identifiers) {query_data['return']}
+        }}
+        """
+    else:
+        query = f"""
+        {query_data['operation']} {query_data['type']}(${query_data['variables']['key']}: {query_data['variables']['value']}, $identifiers: IdentifiersRequest!) {{
+            {query_data['type']}({query_data['variables']['key']}: ${query_data['variables']['key']}, identifiers: $identifiers) {query_data['return']}
+        }}
+        """
+        request_variables = {query_data['variables']['key']: request_variables}
+        
+    variables = {
+        "identifiers": identifiers,
+        **request_variables
+    }
+
+    payload = {
+        "query": query,
+        "variables": variables
+    }
+
+    return payload
 
 
 def make_api_call(api_key, account_id, org_id, project_id, query_type, request_variables=None):
@@ -93,39 +127,16 @@ def make_api_call(api_key, account_id, org_id, project_id, query_type, request_v
     :param account_id: The account identifier
     :param org_id: The organization identifier
     :param project_id: The project identifier
-    :param query_type: The type of query to be executed (e.g., 'register_infra', 'add_probe')
+    :param query_type: The type of query to be executed (e.g., 'register_infra', 'add_probe', 'stop_all_chaos')
     :param request_variables: The variables to be included in the request payload
     :return: The response from the Chaos API as a JSON object
     :raises SystemError: If an HTTP error or other error occurs during the API call
     """
-    if request_variables is None:
-        request_variables = {}
-
-    query_data = supported_api_methods(query_type)
+    payload = supported_api_methods(query_type, account_id, org_id, project_id, request_variables)
     chaos_uri = f"{HARNESS_API}/gateway/chaos/manager/api/query"
     headers = {
         "Content-Type": "application/json",
         "x-api-key": api_key
-    }
-
-    query = f"""
-    {query_data['operation']} {query_data['type']}(${query_data['param']['key']}: {query_data['param']['value']}, $identifiers: IdentifiersRequest!) {{
-        {query_data['type']}({query_data['param']['key']}: ${query_data['param']['key']}, identifiers: $identifiers) {query_data['return']}
-    }}
-    """
-
-    variables = {
-        f"{query_data['param']['key']}": request_variables,
-        "identifiers": {
-            "accountIdentifier": account_id,
-            "orgIdentifier": org_id,
-            "projectIdentifier": project_id
-        }
-    }
-
-    payload = {
-        "query": query,
-        "variables": variables
     }
 
     response = requests.post(chaos_uri, headers=headers, json=payload)
