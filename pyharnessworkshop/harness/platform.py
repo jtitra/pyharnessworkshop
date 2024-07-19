@@ -319,3 +319,58 @@ def create_harness_pipeline(api_key, account_id, org_id, project_id, pipeline_ya
     else:
         print(f"  ERROR: Request failed. Status Code: {response_code}")
         print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def create_project_secret(api_key, account_id, org_id, project_id, input_yaml):
+    """
+    Creates a secret in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param input_yaml: The Harness secret YAML payload.
+    """
+    url = f"{HARNESS_API}/v1/orgs/{org_id}/projects/{project_id}/secrets"
+    headers = {
+        "Content-Type": "application/yaml",
+        "x-api-key": api_key,
+        "Harness-Account": account_id
+    }
+
+    validate_yaml_content(input_yaml)
+    response = requests.post(url, headers=headers, data=input_yaml, stream=True)
+    response_code = response.status_code
+
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully created Harness secret.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def create_project_connector(api_key, account_id, org_id, project_id, input_yaml):
+    """
+    Creates a connector in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param input_yaml: The Harness connector YAML payload.
+    """
+    url = f"{HARNESS_API}/gateway/ng/api/connectors/?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/yaml",
+        "x-api-key": api_key
+    }
+
+    validate_yaml_content(input_yaml)
+    response = requests.post(url, headers=headers, data=input_yaml, stream=True)
+    response_code = response.status_code
+
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully created Harness connector.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
