@@ -15,6 +15,7 @@
 import subprocess
 import time
 import requests
+import jinja2
 from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####
@@ -361,7 +362,7 @@ def create_project_connector(api_key, account_id, org_id, project_id, input_yaml
     """
     url = f"{HARNESS_API}/gateway/ng/api/connectors/?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
     headers = {
-        "Content-Type": "text/yaml",
+        "Content-Type": "application/yaml",
         "x-api-key": api_key
     }
 
@@ -374,3 +375,79 @@ def create_project_connector(api_key, account_id, org_id, project_id, input_yaml
     else:
         print(f"  ERROR: Request failed. Status Code: {response_code}")
         print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def deploy_harness_delegate(api_key, account_id, org_id, project_id, template_path, delegate_name):
+    """
+    Deploys a Harness delegate using the provided template.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param template_path: The path to the delegate template file.
+    :param delegate_name: The name to assign to the delegate.
+    """
+    output_file = "harness-delegate.yaml"
+    delegate_token = generate_delegate_token(api_key, account_id, org_id, project_id, f"{delegate_name}-token")
+    delegate_image = get_latest_delegate_tag(4)
+    with open(template_path, "r") as file:
+        template = jinja2.Template(file.read())
+    rendered_content = template.render(
+        delegate_name=delegate_name,
+        account_id=account_id,
+        delegate_token=delegate_token,
+        delegate_image=delegate_image
+    )
+    with open(output_file, 'w') as file:
+        file.write(rendered_content)
+    with open(output_file, 'r') as file:
+        validate_yaml_content(file)
+    try:
+        subprocess.run(["kubectl", "apply", "-f", output_file], check=True)
+    except subprocess.CalledProcessError:
+        print("  ERROR: Failed to apply the provided YAML.")
+
+
+def generate_delegate_token(api_key, account_id, org_id, project_id, token_name):
+    """
+    Generates a delegate token for the specified Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param token_name: The name to assign to the generated token.
+    :return: The generated delegate token.
+    """
+    headers = {
+        "x-api-key": api_key
+    }
+    url = f"{HARNESS_API}/ng/api/delegate-token-ng?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}&tokenName={token_name}"
+    response = requests.post(url, headers=headers)
+    if response.status_code == 200:
+        response_json = response.json()
+        return response_json.get("resource", {}).get("value")
+    else:
+        response.raise_for_status()
+
+
+def get_latest_delegate_tag(latest=0):
+    """
+    Retrieves the latest tag for the Harness delegate image from Docker Hub.
+
+    :return: The latest full tag for the Harness delegate image.
+    :raises ValueError: If no full tags are found in the repository.
+    """
+    url = "https://hub.docker.com/v2/repositories/harness/delegate/tags"
+    params = {
+        "page_size": 1000,
+        "ordering": "last_updated"
+    }
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    tags = response.json()["results"]
+    full_tags = [tag["name"] for tag in tags if "minimal" not in tag["name"].lower()]
+    if not full_tags:
+        raise ValueError("No full tags found in the repository.")
+    return full_tags[latest]

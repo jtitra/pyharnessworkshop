@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import requests
 from ..utils.misc import validate_yaml_content
 
@@ -82,6 +83,13 @@ def supported_api_methods(request_type, account_id, org_id, project_id, request_
                 "type": "stopAllWorkflowRuns",
                 "variables": {},
                 "return": ""
+            }
+        case "get_experiment_run_report":
+            query_data = {
+                "operation": "query",
+                "type": "getExperimentRunReport",
+                "variables": {"key": "experimentRunIDs", "value": "[String]"},
+                "return": "{ workflowID updatedAt infra { environmentID infraID name infraType } workflowName workflowDescription workflowTags workflowType isCronEnabled cronSyntax phase resiliencyScore weightages { experimentName weightage } executionData errorResponse}"
             }
         case _:
             raise ValueError(f"Unsupported request type: {request_type}")
@@ -274,3 +282,38 @@ def get_manifest_for_infra(api_key, account_id, org_id, project_id, name):
             validate_yaml_content(file)
     else:
         print(f"No infrastructure found with the name '{name}'")
+
+
+def parse_experiment_run_report(api_response):
+    experiment_runs = api_response['data']['getExperimentRunReport']
+    
+    parsed_reports = []
+    
+    for run in experiment_runs:
+        # Parse the executionData JSON string
+        execution_data = json.loads(run['executionData'])
+        
+        parsed_report = {
+            "workflowRunID": run['workflowRunID'],
+            "runSequence": run['runSequence'],
+            "notifyID": run['notifyID'],
+            "workflowID": run['workflowID'],
+            "updatedAt": run['updatedAt'],
+            "infra": run['infra'],
+            "workflowName": run['workflowName'],
+            "workflowDescription": run['workflowDescription'],
+            "workflowTags": run['workflowTags'],
+            "workflowType": run['workflowType'],
+            "isCronEnabled": run['isCronEnabled'],
+            "cronSyntax": run['cronSyntax'],
+            "phase": run['phase'],
+            "resiliencyScore": run['resiliencyScore'],
+            "updatedBy": run['updatedBy'],
+            "weightages": run['weightages'],
+            "executionData": execution_data,
+            "errorResponse": run['errorResponse']
+        }
+        
+        parsed_reports.append(parsed_report)
+    
+    return parsed_reports
