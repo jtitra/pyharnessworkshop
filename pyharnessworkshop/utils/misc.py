@@ -23,6 +23,9 @@ import random
 import hashlib
 import yaml
 
+#### GLOBAL VARIABLES ####
+WORKSHOP_REPO = "harness-community/field-workshops"
+
 # PYDOC_RETURN_LABEL = ":return:"
 # PYDOC_FOLLOW_PARAM = ":param bool follow:"
 
@@ -53,19 +56,13 @@ def setup_vs_code(service_port, code_server_directory):
         download_and_install()
 
     # Setup VS Code
-    os.makedirs("/home/harness/.local/share/code-server/User/", exist_ok=True)
-    os.chown(
-        "/home/harness/.local/share",
-        pwd.getpwnam("harness").pw_uid,
-        grp.getgrnam("harness").gr_gid
-    )
-
-    settings_url = "https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/settings.json"
+    os.makedirs("/root/.local/share/code-server/User/", exist_ok=True)
+    settings_url = f"https://raw.githubusercontent.com/{WORKSHOP_REPO}/main/assets/misc/vs_code/settings.json"
     settings_response = requests.get(settings_url)
-    with open("/home/harness/.local/share/code-server/User/settings.json", "wb") as f:
+    with open("/root/.local/share/code-server/User/settings.json", "wb") as f:
         f.write(settings_response.content)
 
-    service_url = "https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/code-server.service"
+    service_url = f"https://raw.githubusercontent.com/{WORKSHOP_REPO}/main/assets/misc/vs_code/code-server.service"
     service_response = requests.get(service_url)
     with open("/etc/systemd/system/code-server.service", "wb") as f:
         f.write(service_response.content)

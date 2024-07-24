@@ -16,6 +16,7 @@ import subprocess
 import time
 import requests
 import jinja2
+from pathlib import Path
 from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####
@@ -388,7 +389,8 @@ def deploy_harness_delegate(api_key, account_id, org_id, project_id, template_pa
     :param template_path: The path to the delegate template file.
     :param delegate_name: The name to assign to the delegate.
     """
-    output_file = "harness-delegate.yaml"
+    input_path = Path(template_path)
+    output_file = f"{input_path.parent}/harness-delegate.yaml"
     delegate_token = generate_delegate_token(api_key, account_id, org_id, project_id, f"{delegate_name}-token")
     delegate_image = get_latest_delegate_tag(4)
     with open(template_path, "r") as file:
