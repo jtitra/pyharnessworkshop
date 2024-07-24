@@ -453,3 +453,35 @@ def get_latest_delegate_tag(latest=0):
     if not full_tags:
         raise ValueError("No full tags found in the repository.")
     return full_tags[latest]
+
+
+def update_repo_security_settings(api_key, account_id, org_id, project_id, repo_identifier, secret_scanning_enabled=True, vulnerability_scanning_mode="disabled"):
+    """
+    Updates the security settings for a repository in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param repo_identifier: The identifier for the repository.
+    :param secret_scanning_enabled: Boolean flag to enable/disable secret scanning.
+    :param vulnerability_scanning_mode: Mode for vulnerability scanning.
+    """
+    url = f"{HARNESS_API}/code/api/v1/repos/{repo_identifier}/settings/security?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    payload = {
+        "secret_scanning_enabled": secret_scanning_enabled,
+        "vulnerability_scanning_mode": vulnerability_scanning_mode
+    }
+
+    response = requests.patch(url, headers=headers, json=payload)
+    response_code = response.status_code
+
+    if 200 <= response_code < 300:
+        print("INFO: Successfully updated repository security settings.")
+    else:
+        print(f"ERROR: Request failed. Status Code: {response_code}")
+        print(f"Response Content: {response.content.decode('utf-8')}")
