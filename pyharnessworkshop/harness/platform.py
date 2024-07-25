@@ -363,7 +363,7 @@ def create_project_connector(api_key, account_id, org_id, project_id, input_yaml
     """
     url = f"{HARNESS_API}/gateway/ng/api/connectors/?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
     headers = {
-        "Content-Type": "application/yaml",
+        "Content-Type": "text/yaml",
         "x-api-key": api_key
     }
 
