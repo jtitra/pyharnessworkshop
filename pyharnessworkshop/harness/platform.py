@@ -323,6 +323,98 @@ def create_harness_pipeline(api_key, account_id, org_id, project_id, pipeline_ya
         print(f"  Response Content: {response.content.decode('utf-8')}")
 
 
+def update_pipeline(api_key, account_id, org_id, project_id, pipeline_id, pipeline_yaml):
+    """
+    Updates an existing pipeline in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param pipeline_id: The identifier of the pipeline to update.
+    :param pipeline_yaml: The Harness pipeline YAML payload.
+    """
+    url = f"{HARNESS_API}/pipeline/api/pipelines/v2/{pipeline_id}?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/yaml",
+        "x-api-key": api_key
+    }
+
+    validate_yaml_content(pipeline_yaml)
+    response = requests.put(url, headers=headers, data=pipeline_yaml, stream=True)
+    response_code = response.status_code
+
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully updated Harness pipeline.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def list_pipelines(api_key, account_id, org_id, project_id):
+    """
+    Lists all pipelines in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :return: A JSON response containing the list of pipelines.
+    """
+    url = f"{HARNESS_API}/pipeline/api/pipelines/list?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    payload = {
+        "filterType": "PipelineSetup"
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    try:
+        response.raise_for_status()  # Raises HTTPError if the response status is 4xx/5xx
+        json_response = response.json()
+        if json_response.get('status') != "SUCCESS":
+            raise ValueError(f"API errors: {json_response['errors']}")
+        return json_response
+    except requests.exceptions.HTTPError as http_err:
+        raise SystemError(f"HTTP error occurred: {http_err}")
+    except Exception as err:
+        raise SystemError(f"Other error occurred: {err}")
+
+
+def get_pipeline_by_id(json_response, pipeline_id):
+    """
+    Retrieves a pipeline from the provided JSON response by its identifier.
+
+    :param json_response: The JSON response containing the list of pipelines.
+    :param pipeline_id: The identifier of the pipeline to retrieve.
+    :return: The pipeline data if found, otherwise None.
+    """
+    if json_response.get("status") == "SUCCESS":
+        content = json_response.get("data", {}).get("content", [])
+        if len(content) == 1:
+            print("Project only contains a single pipeline.")
+            identifier = content[0].get("identifier")
+            print(f"Single pipeline identifier: {identifier}")
+            return content[0]
+        elif len(content) > 1:
+            print("Project contains multiple pipelines.")
+            target_pipeline = None
+            for pipeline in content:
+                if pipeline.get("identifier", "").lower() == pipeline_id.lower():
+                    target_pipeline = pipeline
+                    break
+            if target_pipeline:
+                print(f"Found pipeline: {target_pipeline.get('identifier')}")
+                return target_pipeline
+            else:
+                print(f"No pipeline with identifier '{pipeline_id}' found.")
+                return None
+    else:
+        print("API call failed or returned an unsuccessful status.")
+
+
 def create_project_secret(api_key, account_id, org_id, project_id, input_yaml):
     """
     Creates a secret in the provided Harness project.
@@ -485,3 +577,116 @@ def update_repo_security_settings(api_key, account_id, org_id, project_id, repo_
     else:
         print(f"ERROR: Request failed. Status Code: {response_code}")
         print(f"Response Content: {response.content.decode('utf-8')}")
+
+
+def create_service(api_key, account_id, org_id, project_id, service_yaml):
+    """
+    Creates a service in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param service_yaml: The Harness service YAML payload.
+    """
+    url = f"{HARNESS_API}/ng/api/servicesV2?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    response = requests.post(url, headers=headers, json=service_yaml, stream=True)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully created Harness service.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def list_services(api_key, account_id, org_id, project_id):
+    """
+    Lists all services in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :return: A JSON response containing the list of services.
+    """
+    url = f"{HARNESS_API}/ng/api/servicesV2?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()  # Raises HTTPError if the response status is 4xx/5xx
+        json_response = response.json()
+        if json_response.get('status') != "SUCCESS":
+            raise ValueError(f"API errors: {json_response['errors']}")
+        return json_response
+    except requests.exceptions.HTTPError as http_err:
+        raise SystemError(f"HTTP error occurred: {http_err}")
+    except Exception as err:
+        raise SystemError(f"Other error occurred: {err}")
+
+
+def update_service(api_key, account_id, org_id, project_id, service_id, service_yaml):
+    """
+    Updates an existing service in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param service_id: The identifier of the service to update.
+    :param service_yaml: The Harness service YAML payload.
+    """
+    url = f"{HARNESS_API}/ng/api/servicesV2?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    response = requests.put(url, headers=headers, json=service_yaml, stream=True)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully updated Harness service.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def get_service_by_id(json_response, service_id):
+    """
+    Retrieves a service from the provided JSON response by its identifier.
+
+    :param json_response: The JSON response containing the list of services.
+    :param service_id: The identifier of the service to retrieve.
+    :return: The service data if found, otherwise None.
+    """
+    if json_response.get("status") == "SUCCESS":
+        content = json_response.get("data", {}).get("content", [])
+        if len(content) == 1:
+            print("Project only contains a single service.")
+            identifier = content[0].get("service").get("identifier")
+            print(f"Single service identifier: {identifier}")
+            if identifier.lower() == service_id.lower():
+                return content[0]
+            else:
+                return None
+        elif len(content) > 1:
+            print("Project contains multiple services.")
+            target_service = None
+            for service_data in content:
+                service = service_data.get("service", {})
+                if service.get("identifier", "").lower() == service_id.lower():
+                    target_service = service
+                    break
+            if target_service:
+                print(f"Found service: {target_service.get('identifier')}")
+                return target_service
+            else:
+                print(f"No service with identifier '{service_id}' found.")
+                return None
+    else:
+        print("API call failed or returned an unsuccessful status.")

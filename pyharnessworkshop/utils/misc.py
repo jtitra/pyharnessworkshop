@@ -13,8 +13,6 @@
 # limitations under the License.
 
 import os
-import pwd
-import grp
 import subprocess
 import requests
 from jinja2 import Template
@@ -84,7 +82,7 @@ def generate_credentials_html(credentials):
     :param credentials: List of credentials to populate the template
     :return: Rendered HTML content as a string
     """
-    template_url = "https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/credential_tab_template.html"
+    template_url = f"https://raw.githubusercontent.com/{WORKSHOP_REPO}/main/assets/misc/credential_tab_template.html"
     try:
         # Fetch the HTML template from the URL
         response = requests.get(template_url)
@@ -197,4 +195,28 @@ def validate_yaml_content(yaml_content):
         return yaml_data
     except yaml.YAMLError as exc:
         print("  ERROR: The provided YAML is not valid.", exc)
+        return None
+
+
+def render_template_from_url(context, template_path):
+    """
+    Fetches a Jinja2 template from a URL and renders it with the provided context.
+
+    :param context: A dictionary containing the context for rendering the template.
+    :param template_path: The path in the repo of the Jinja2 template to fetch.
+    :return: The rendered content as a string, or None if an error occurs.
+    """
+    template_url = f"https://raw.githubusercontent.com/{WORKSHOP_REPO}/main/{template_path}"
+    try:
+        response = requests.get(template_url)
+        response.raise_for_status()
+        template_content = response.text
+        template = Template(template_content)
+        rendered_content = template.render(context)
+        return rendered_content
+    except requests.RequestException as e:
+        print(f"Error fetching the template: {e}")
+        return None
+    except Exception as e:
+        print(f"Error rendering the template: {e}")
         return None
