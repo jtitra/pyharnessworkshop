@@ -690,3 +690,36 @@ def get_service_by_id(json_response, service_id):
                 return None
     else:
         print("API call failed or returned an unsuccessful status.")
+
+
+def create_user_group(api_key, account_id, org_id, project_id, group_name, users=None):
+    """
+    Creates a user group in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param group_name: The name of the group to create.
+    :param users: Array of user IDs to add to the group.
+    """
+    if users is None:
+        users = []
+    url = f"{HARNESS_API}/ng/api/user-groups?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    group_identifer = group_name.replace(" ", "_").replace("-", "")
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    payload = {
+        "identifier": f"{group_identifer}",
+        "name": f"{group_name}",
+        "users": users
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        print("  INFO: Successfully created Harness Group.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
