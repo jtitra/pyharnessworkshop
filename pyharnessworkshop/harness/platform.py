@@ -17,6 +17,7 @@ import time
 import requests
 import jinja2
 from pathlib import Path
+from urllib.parse import quote
 from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####
@@ -720,6 +721,40 @@ def create_user_group(api_key, account_id, org_id, project_id, group_name, users
     response_code = response.status_code
     if 200 <= response_code < 300:
         print("  INFO: Successfully created Harness Group.")
+    else:
+        print(f"  ERROR: Request failed. Status Code: {response_code}")
+        print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def execute_pipeline(api_key, account_id, org_id, project_id, pipeline_id, execution_yaml, execution_notes=None):
+    """
+    Executes a Harness pipeline with the specified parameters.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param pipeline_id: The identifier of the pipeline to execute.
+    :param execution_yaml: The YAML content for the pipeline execution.
+    :param execution_notes: Notes for the pipeline execution.
+    :return: The response from the API call.
+    """
+    base_url = f"{HARNESS_API}/gateway/pipeline/api/pipeline/execute/{pipeline_id}"
+    query_params = (
+        f"accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    )
+    if execution_notes:
+        encoded_execution_notes = quote(execution_notes)
+        query_params += f"&notesForPipelineExecution={encoded_execution_notes}"
+    url = f"{base_url}?{query_params}"
+    headers = {
+        "Content-Type": "application/yaml",
+        "x-api-key": api_key
+    }
+    response = requests.post(url, headers=headers, data=execution_yaml)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        print("  INFO: Pipeline execution started successfully.")
     else:
         print(f"  ERROR: Request failed. Status Code: {response_code}")
         print(f"  Response Content: {response.content.decode('utf-8')}")
