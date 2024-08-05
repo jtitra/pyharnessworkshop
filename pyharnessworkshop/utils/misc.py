@@ -220,3 +220,23 @@ def render_template_from_url(context, template_path):
     except Exception as e:
         print(f"Error rendering the template: {e}")
         return None
+
+
+def fetch_template_from_url(template_path, output_file):
+    """
+    Fetches a Jinja2 template from a URL and outputs it to the specified file.
+
+    :param template_path: The path in the repo of the Jinja2 template to fetch.
+    :param output_file: A file to output the template to.
+    """
+    template_url = f"https://raw.githubusercontent.com/{WORKSHOP_REPO}/main/{template_path}"
+    try:
+        response = requests.get(template_url)
+        response.raise_for_status()
+        template_content = response.text
+        with open(output_file, 'w') as file:
+            file.write(template_content)
+    except requests.RequestException as e:
+        print(f"Error fetching the template: {e}")
+    except Exception as e:
+        print(f"Error rendering the template: {e}")
