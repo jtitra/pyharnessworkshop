@@ -5,7 +5,7 @@ Module used by the Harness Instruqt Workshops
 
 import setuptools
 
-PACKAGE_VERSION = "0.1.12"
+PACKAGE_VERSION = "0.1.13"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
