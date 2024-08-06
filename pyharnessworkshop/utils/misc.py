@@ -240,3 +240,103 @@ def fetch_template_from_url(template_path, output_file):
         print(f"Error fetching the template: {e}")
     except Exception as e:
         print(f"Error rendering the template: {e}")
+
+
+def parse_pipeline(yaml_str):
+    """
+    Parses a YAML string representing a pipeline configuration and extracts the stages into a dictionary.
+
+    :param yaml_str: A string containing the YAML representation of the pipeline configuration.
+    :return: A dictionary with the stage names as keys and their respective details as values. 
+    """
+    pipeline_data = yaml.safe_load(yaml_str)
+    stages_dict = {}
+    stages = pipeline_data.get("pipeline", {}).get("stages", [])
+    for stage_entry in stages:
+        stage = stage_entry.get("stage")
+        if stage:
+            stage_name = stage.get("name")
+            stage_data = {
+                "identifier": stage.get("identifier"),
+                "description": stage.get("description", ""),
+                "type": stage.get("type"),
+                "spec": stage.get("spec", {})
+            }
+            stages_dict[stage_name] = stage_data
+    return stages_dict
+
+
+def validate_steps_by_stage_type(stages_dict, stage_type, step_context):
+    """
+    Validates steps in a given stage type against the provided step context.
+
+    :param stages_dict: Dictionary containing stages with their details.
+    :param stage_type: The type of stage to filter (e.g., 'CI').
+    :param step_context: A dictionary of steps and their expected values to validate.
+    :return: A dictionary of misconfigured_steps.
+    """
+    misconfigured_steps = []
+    for stage_name, stage_details in stages_dict.items():
+        if stage_details.get("type") == stage_type:
+            execution = stage_details.get("spec", {}).get("execution", {})
+            steps = execution.get("steps", [])
+            # Flatten the list of steps and parallel steps
+            flat_steps = []
+            for step_entry in steps:
+                if "step" in step_entry:
+                    flat_steps.append(step_entry["step"])
+                elif "parallel" in step_entry:
+                    for parallel_step in step_entry["parallel"]:
+                        if "step" in parallel_step:
+                            flat_steps.append(parallel_step["step"])
+            # Validate the step context against the found steps
+            for step_key, expected_properties in step_context.items():
+                matching_steps = [
+                    s for s in flat_steps
+                    if (s.get("type", "").lower() == step_key.lower() or
+                        s.get("name", "").lower() == step_key.lower() or
+                        s.get("identifier", "").lower() == step_key.lower())
+                ]
+                if not matching_steps:
+                    print(f"Step '{step_key}' not found in stage '{stage_name}' with type '{stage_type}'.")
+                    misconfigured_steps.append({
+                        "step_key": step_key,
+                        "stage_name": stage_name,
+                        "stage_type": stage_type,
+                        "property": None,
+                        "expected": None,
+                        "actual": None,
+                        "message": f"Step '{step_key}' not found in stage '{stage_name}' with type '{stage_type}'."
+                    })
+                    continue
+                # Validate the expected properties for each matching step
+                for step in matching_steps:
+                    for prop_key, expected_value in expected_properties.items():
+                        actual_value = step.get(prop_key)
+                        if isinstance(expected_value, dict):
+                            for sub_key, sub_expected_value in expected_value.items():
+                                sub_actual_value = actual_value.get(sub_key) if actual_value else None
+                                if sub_actual_value != sub_expected_value:
+                                    print(f"Mismatch for step '{step_key}' in property '{prop_key}.{sub_key}': expected '{sub_expected_value}', got '{sub_actual_value}'")
+                                    misconfigured_steps.append({
+                                        "step_key": step_key,
+                                        "stage_name": stage_name,
+                                        "stage_type": stage_type,
+                                        "property": f"{prop_key}.{sub_key}",
+                                        "expected": sub_expected_value,
+                                        "actual": sub_actual_value,
+                                        "message": f"Mismatch for step '{step_key}' in property '{prop_key}.{sub_key}': expected '{sub_expected_value}', got '{sub_actual_value}'"
+                                    })
+                        else:
+                            if actual_value != expected_value:
+                                print(f"Mismatch for step '{step_key}' in property '{prop_key}': expected '{expected_value}', got '{actual_value}'")
+                                misconfigured_steps.append({
+                                    "step_key": step_key,
+                                    "stage_name": stage_name,
+                                    "stage_type": stage_type,
+                                    "property": prop_key,
+                                    "expected": expected_value,
+                                    "actual": actual_value,
+                                    "message": f"Mismatch for step '{step_key}' in property '{prop_key}': expected '{expected_value}', got '{actual_value}'"
+                                })
+    return misconfigured_steps
