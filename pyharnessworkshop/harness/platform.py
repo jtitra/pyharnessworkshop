@@ -758,3 +758,34 @@ def execute_pipeline(api_key, account_id, org_id, project_id, pipeline_id, execu
     else:
         print(f"  ERROR: Request failed. Status Code: {response_code}")
         print(f"  Response Content: {response.content.decode('utf-8')}")
+
+
+def get_pipeline_yaml(api_key, account_id, org_id, project_id, pipeline_id):
+    """
+    Retrieves the YAML content of a specified Harness pipeline.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param pipeline_id: The identifier of the pipeline to retrieve.
+    :return: The YAML content of the pipeline.
+    """
+    url = (
+        f"{HARNESS_API}/gateway/pipeline/api/pipelines/{pipeline_id}"
+        f"?accountIdentifier={account_id}&orgIdentifier={org_id}&projectIdentifier={project_id}"
+    )
+    headers = {
+        "Load-From-Cache": "false",
+        "x-api-key": api_key
+    }
+    response = requests.get(url, headers=headers)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        data = response.json().get("data", {})
+        pipeline_yaml = data.get("yamlPipeline", "")
+        return pipeline_yaml
+    else:
+        print(f"ERROR: Request failed. Status Code: {response_code}")
+        print(f"Response Content: {response.content.decode("utf-8")}")
+        return None
