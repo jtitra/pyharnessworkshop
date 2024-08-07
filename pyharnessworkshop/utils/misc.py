@@ -425,3 +425,23 @@ def validate_stage_configuration(stages_dict, stage_id, stage_context):
                             "message": f"Mismatch in '{key}' for stage '{stage_name}': expected '{expected_value}', found '{actual_value}'."
                         })
     return mismatches
+
+
+def get_stage_identifier_from_dict(pipeline_dict, stage_type, service_name=None):
+    """
+    Retrieves the identifier of a stage based on the stage type and an optional service name.
+
+    :param pipeline_dict: Dictionary containing stages with their details.
+    :param stage_type: The type of the stage to filter.
+    :param service_name: (Optional) The name of the service to filter within the stage type.
+    :return: The identifier of the matching stage, or None if no match is found.
+    """
+    for key, value in pipeline_dict.items():
+        if value.get('type') == stage_type:
+            if service_name:
+                service_ref = value.get('spec', {}).get('service', {}).get('serviceRef')
+                if service_ref and service_ref == service_name:
+                    return value['identifier']
+            else:
+                return value['identifier']
+    return None
