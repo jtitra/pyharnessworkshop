@@ -252,32 +252,40 @@ def parse_pipeline(yaml_str):
     pipeline_data = yaml.safe_load(yaml_str)
     stages_dict = {}
     stages = pipeline_data.get("pipeline", {}).get("stages", [])
+    # Flatten the list of stage and parallel stage
+    flat_stages = []
     for stage_entry in stages:
-        stage = stage_entry.get("stage")
-        if stage:
-            stage_name = stage.get("name")
-            stage_data = {
-                "identifier": stage.get("identifier"),
-                "description": stage.get("description", ""),
-                "type": stage.get("type"),
-                "spec": stage.get("spec", {})
-            }
-            stages_dict[stage_name] = stage_data
+        if "stage" in stage_entry:
+            flat_stages.append(stage_entry["stage"])
+        elif "parallel" in stage_entry:
+            for parallel_stage in stage_entry["parallel"]:
+                if "stage" in parallel_stage:
+                    flat_stages.append(parallel_stage["stage"])
+    for stage in flat_stages:
+        stage_name = stage.get("name")
+        stage_data = {
+            "identifier": stage.get("identifier"),
+            "description": stage.get("description", ""),
+            "type": stage.get("type"),
+            "spec": stage.get("spec", {})
+        }
+        stages_dict[stage_name] = stage_data
     return stages_dict
 
 
-def validate_steps_by_stage_type(stages_dict, stage_type, step_context):
+def validate_steps_in_stage(stages_dict, stage_id, step_context):
     """
     Validates steps in a given stage type against the provided step context.
 
     :param stages_dict: Dictionary containing stages with their details.
-    :param stage_type: The type of stage to filter (e.g., 'CI').
+    :param stage_id: The ID of the stage to filter.
     :param step_context: A dictionary of steps and their expected values to validate.
     :return: A dictionary of misconfigured_steps.
     """
     misconfigured_steps = []
     for stage_name, stage_details in stages_dict.items():
-        if stage_details.get("type") == stage_type:
+        if stage_details.get("identifier", "").lower() == stage_id.lower():
+            stage_type = stage_details.get("type")
             execution = stage_details.get("spec", {}).get("execution", {})
             steps = execution.get("steps", [])
             # Flatten the list of steps and parallel steps
@@ -289,6 +297,10 @@ def validate_steps_by_stage_type(stages_dict, stage_type, step_context):
                     for parallel_step in step_entry["parallel"]:
                         if "step" in parallel_step:
                             flat_steps.append(parallel_step["step"])
+                elif "stepGroup" in step_entry:
+                    for group_step in step_entry["stepGroup"]["steps"]:
+                        if "step" in group_step:
+                            flat_steps.append(group_step["step"])
             # Validate the step context against the found steps
             for step_key, expected_properties in step_context.items():
                 matching_steps = [
@@ -340,3 +352,76 @@ def validate_steps_by_stage_type(stages_dict, stage_type, step_context):
                                     "message": f"Mismatch for step '{step_key}' in property '{prop_key}': expected '{expected_value}', got '{actual_value}'"
                                 })
     return misconfigured_steps
+
+
+def validate_stage_configuration(stages_dict, stage_id, stage_context):
+    """
+    Validates the configuration of a given stage against the provided stage context.
+
+    :param stages_dict: Dictionary containing stages with their details.
+    :param stage_id: The ID of the stage to filter.
+    :param stage_context: A dictionary of stage configurations and their expected values to validate.
+    :return: A list of mismatches, where each mismatch is a dictionary containing the path and details of the discrepancy.
+    """
+    mismatches = []
+    for stage_name, stage_details in stages_dict.items():
+        if stage_details.get("identifier", "").lower() == stage_id.lower():
+            stage_type = stage_details.get("type")
+            for key, expected_value in stage_context.items():
+                if key not in stage_details.get("spec", {}):
+                    print(f"Configuration '{key}' not found in stage '{stage_name}'.")
+                    mismatches.append({
+                        "path": f"{stage_name}.{key}",
+                        "stage_name": stage_name,
+                        "stage_type": stage_type,
+                        "expected": expected_value,
+                        "actual": None,
+                        "message": f"Configuration '{key}' not found in stage '{stage_name}'."
+                    })
+                else:
+                    actual_value = stage_details["spec"][key]
+                    if isinstance(expected_value, dict):
+                        for sub_key, sub_expected_value in expected_value.items():
+                            if sub_key not in actual_value:
+                                print(f"Configuration key '{key}.{sub_key}' not found in stage '{stage_name}'.")
+                                mismatches.append({
+                                    "path": f"{stage_name}.{key}.{sub_key}",
+                                    "stage_name": stage_name,
+                                    "stage_type": stage_type,
+                                    "expected": sub_expected_value,
+                                    "actual": None,
+                                    "message": f"Configuration key '{key}.{sub_key}' not found in stage '{stage_name}'."
+                                })
+                            elif actual_value[sub_key] != sub_expected_value:
+                                print(f"Mismatch in '{key}.{sub_key}' for stage '{stage_name}': expected '{sub_expected_value}', found '{actual_value.get(sub_key)}'.")
+                                mismatches.append({
+                                    "path": f"{stage_name}.{key}.{sub_key}",
+                                    "stage_name": stage_name,
+                                    "stage_type": stage_type,
+                                    "expected": sub_expected_value,
+                                    "actual": actual_value[sub_key],
+                                    "message": f"Mismatch in '{key}.{sub_key}' for stage '{stage_name}': expected '{sub_expected_value}', found '{actual_value.get(sub_key)}'."
+                                })
+                    elif isinstance(expected_value, list):
+                        for item in expected_value:
+                            if item not in actual_value:
+                                print(f"Expected list item '{item}' not found in '{key}' for stage '{stage_name}'.")
+                                mismatches.append({
+                                    "path": f"{stage_name}.{key}",
+                                    "stage_name": stage_name,
+                                    "stage_type": stage_type,
+                                    "expected": item,
+                                    "actual": None,
+                                    "message": f"Expected list item '{item}' not found in '{key}' for stage '{stage_name}'."
+                                })
+                    elif actual_value != expected_value:
+                        print(f"Mismatch in '{key}' for stage '{stage_name}': expected '{expected_value}', found '{actual_value}'.")
+                        mismatches.append({
+                            "path": f"{stage_name}.{key}",
+                            "stage_name": stage_name,
+                            "stage_type": stage_type,
+                            "expected": expected_value,
+                            "actual": actual_value,
+                            "message": f"Mismatch in '{key}' for stage '{stage_name}': expected '{expected_value}', found '{actual_value}'."
+                        })
+    return mismatches
