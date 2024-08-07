@@ -440,7 +440,7 @@ def get_stage_identifier_from_dict(pipeline_dict, stage_type, service_name=None)
         if value.get('type') == stage_type:
             if service_name:
                 service_ref = value.get('spec', {}).get('service', {}).get('serviceRef')
-                if service_ref and service_ref == service_name:
+                if service_ref.lower() == service_name.lower():
                     return value['identifier']
             else:
                 return value['identifier']
