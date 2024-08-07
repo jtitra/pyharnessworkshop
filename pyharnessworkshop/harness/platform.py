@@ -787,5 +787,5 @@ def get_pipeline_yaml(api_key, account_id, org_id, project_id, pipeline_id):
         return pipeline_yaml
     else:
         print(f"ERROR: Request failed. Status Code: {response_code}")
-        print(f"Response Content: {response.content.decode("utf-8")}")
+        print(f"Response Content: {response.content.decode('utf-8')}")
         return None
