@@ -485,7 +485,7 @@ def deploy_harness_delegate(api_key, account_id, org_id, project_id, template_pa
     input_path = Path(template_path)
     output_file = f"{input_path.parent}/harness-delegate.yaml"
     delegate_token = generate_delegate_token(api_key, account_id, org_id, project_id, f"{delegate_name}-token")
-    delegate_image = get_latest_delegate_tag(4)
+    delegate_image = get_latest_delegate_tag(api_key, account_id)
     with open(template_path, "r") as file:
         template = jinja2.Template(file.read())
     rendered_content = template.render(
@@ -527,7 +527,7 @@ def generate_delegate_token(api_key, account_id, org_id, project_id, token_name)
         response.raise_for_status()
 
 
-def get_latest_delegate_tag(latest=0):
+def get_latest_docker_delegate_tag(latest=0):
     """
     Retrieves the latest tag for the Harness delegate image from Docker Hub.
 
@@ -546,6 +546,29 @@ def get_latest_delegate_tag(latest=0):
     if not full_tags:
         raise ValueError("No full tags found in the repository.")
     return full_tags[latest]
+
+
+def get_latest_delegate_tag(api_key, account_id):
+    """
+    Retrieves the latest supported version for the Harness delegate image for the given account.
+
+    :return: The latest supported version for the Harness delegate image.
+    :raises ValueError: If the latest supported version is not found in the response.
+    """
+    url = f"{HARNESS_API}/ng/api/delegate-setup/latest-supported-version?accountIdentifier={account_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+
+    latest_version = data.get("resource", {}).get("latestSupportedVersion")
+    if not latest_version:
+        raise ValueError("Latest supported version not found in the response.")
+
+    return latest_version
 
 
 def update_repo_security_settings(api_key, account_id, org_id, project_id, repo_identifier, secret_scanning_enabled=True, vulnerability_scanning_mode="disabled"):
