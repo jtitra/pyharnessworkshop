@@ -812,3 +812,69 @@ def get_pipeline_yaml(api_key, account_id, org_id, project_id, pipeline_id):
         print(f"ERROR: Request failed. Status Code: {response_code}")
         print(f"Response Content: {response.content.decode('utf-8')}")
         return None
+
+
+def add_user_to_user_group(api_key, account_id, user_email, user_group_id):
+    """
+    Adds a user to a Harness user group based on their email.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param user_email: The email of the user to add to the group.
+    :param user_group_id: The ID of the user group in Harness.
+    """
+    print(f"Getting Harness User ID for user: {user_email}")
+    user_id = get_harness_user_id(api_key, account_id, user_email)
+    if user_id is None:
+        print("  ERROR: Failed to determine the User ID.")
+        raise SystemExit(1)
+    else:
+        print(f"  Got Harness User ID: {user_id}")
+        print(f"  Adding ID: {user_id} to Group: {user_group_id}")
+        url = f"{HARNESS_API}/gateway/ng/api/user-groups/{user_group_id}/member/{user_id}?accountIdentifier={account_id}"
+        headers = {
+            "x-api-key": api_key
+        }
+
+        response = requests.put(url, headers=headers)
+        response_data = response.json()
+        response_status = response_data.get("status")
+
+        if response_status == "SUCCESS":
+            print("  User was successfully added to group.")
+        else:
+            print(f"  ERROR: Failed to add user to group. Response: {response_data}")
+            raise SystemExit(1)
+
+
+def remove_user_from_user_group(api_key, account_id, user_email, user_group_id):
+    """
+    Removes a user to a Harness user group based on their email.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param user_email: The email of the user to remove from the group.
+    :param user_group_id: The ID of the user group in Harness.
+    """
+    print(f"Getting Harness User ID for user: {user_email}")
+    user_id = get_harness_user_id(api_key, account_id, user_email)
+    if user_id is None:
+        print("  ERROR: Failed to determine the User ID.")
+        raise SystemExit(1)
+    else:
+        print(f"  Got Harness User ID: {user_id}")
+        print(f"  Removing ID: {user_id} from Group: {user_group_id}")
+        url = f"{HARNESS_API}/gateway/ng/api/user-groups/{user_group_id}/member/{user_id}?accountIdentifier={account_id}"
+        headers = {
+            "x-api-key": api_key
+        }
+
+        response = requests.delete(url, headers=headers)
+        response_data = response.json()
+        response_status = response_data.get("status")
+
+        if response_status == "SUCCESS":
+            print("  User was successfully removed from group.")
+        else:
+            print(f"  ERROR: Failed to remove user from group. Response: {response_data}")
+            raise SystemExit(1)
