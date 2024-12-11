@@ -22,6 +22,7 @@ from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####
 HARNESS_API = "https://app.harness.io"
+HARNESS_IDP_API = "https://idp.harness.io"
 
 # PYDOC_RETURN_LABEL = ":return:"
 # PYDOC_FOLLOW_PARAM = ":param bool follow:"
@@ -878,3 +879,58 @@ def remove_user_from_user_group(api_key, account_id, user_email, user_group_id):
         else:
             print(f"  ERROR: Failed to remove user from group. Response: {response_data}")
             raise SystemExit(1)
+
+def get_all_idp_catalog_items(api_key, idp_account_id):
+    """
+    Retrieves all items from the IDP catalog.
+
+    :param api_key: The API key for accessing Harness API.
+    :param idp_account_id: The IDP account/instance ID. Different from the Harness account ID.
+    :return: List of items (JSON).
+    """
+    url = f"{HARNESS_IDP_API}/{idp_account_id}/idp/api/catalog/locations"
+    headers = {
+        "x-api-key": api_key
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Error fetching locations: {e}")
+        return []
+
+
+def delete_matching_ids(api_key, idp_account_id, matching_ids):
+    """
+    Iterates over matching IDs and deletes them via the API.
+
+    :param api_key: The API key for accessing Harness API.
+    :param idp_account_id: The IDP account/instance ID. Different from the Harness account ID.
+    :param matching_ids: List of IDs to delete.
+    """
+    for location_id in matching_ids:
+        print(f"Attempting to delete location with ID: {location_id}")
+        url = f"{HARNESS_IDP_API}/{idp_account_id}/idp/api/catalog/locations/{location_id}"
+        headers = {
+            "x-api-key": api_key
+        }
+        try:
+            response = requests.delete(url, headers=headers)
+            if response.status_code == 204:  # HTTP 204: No Content (successful deletion)
+                print(f"  Successfully deleted location with ID: {location_id}")
+            else:
+                print(f"  Failed to delete location with ID: {location_id}. Status code: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"  Error deleting location with ID {location_id}: {e}")
+
+
+def find_ids_with_target(data, search_string):
+    """
+    Finds all IDs where the target field contains the specified search string.
+
+    :param data: List of dictionaries containing target data.
+    :param search_string: String to search for in the target field.
+    :return: List of IDs matching the search criteria.
+    """
+    return [item['data']['id'] for item in data if search_string in item['data']['target']]
