@@ -901,7 +901,7 @@ def get_all_idp_catalog_items(api_key, idp_account_id):
         return []
 
 
-def delete_matching_ids(api_key, idp_account_id, matching_ids):
+def delete_matching_idp_catalog_ids(api_key, idp_account_id, matching_ids):
     """
     Iterates over matching IDs and deletes them via the API.
 
