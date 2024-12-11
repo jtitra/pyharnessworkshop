@@ -880,6 +880,7 @@ def remove_user_from_user_group(api_key, account_id, user_email, user_group_id):
             print(f"  ERROR: Failed to remove user from group. Response: {response_data}")
             raise SystemExit(1)
 
+
 def get_all_idp_catalog_items(api_key, idp_account_id):
     """
     Retrieves all items from the IDP catalog.
@@ -897,7 +898,7 @@ def get_all_idp_catalog_items(api_key, idp_account_id):
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        print(f"Error fetching locations: {e}")
+        print(f"Error fetching catalog item: {e}")
         return []
 
 
@@ -910,7 +911,7 @@ def delete_matching_idp_catalog_ids(api_key, idp_account_id, matching_ids):
     :param matching_ids: List of IDs to delete.
     """
     for location_id in matching_ids:
-        print(f"Attempting to delete location with ID: {location_id}")
+        print(f"Attempting to delete catalog item with ID: {location_id}")
         url = f"{HARNESS_IDP_API}/{idp_account_id}/idp/api/catalog/locations/{location_id}"
         headers = {
             "x-api-key": api_key
@@ -918,11 +919,11 @@ def delete_matching_idp_catalog_ids(api_key, idp_account_id, matching_ids):
         try:
             response = requests.delete(url, headers=headers)
             if response.status_code == 204:  # HTTP 204: No Content (successful deletion)
-                print(f"  Successfully deleted location with ID: {location_id}")
+                print(f"  Successfully deleted catalog item with ID: {location_id}")
             else:
-                print(f"  Failed to delete location with ID: {location_id}. Status code: {response.status_code}")
+                print(f"  Failed to delete catalog item with ID: {location_id}. Status code: {response.status_code}")
         except requests.RequestException as e:
-            print(f"  Error deleting location with ID {location_id}: {e}")
+            print(f"  Error deleting catalog item with ID {location_id}: {e}")
 
 
 def find_ids_with_target(data, search_string):
