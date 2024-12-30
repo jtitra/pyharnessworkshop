@@ -40,14 +40,14 @@ def generate_keycloak_token(keycloak_endpoint, keycloak_admin_user, keycloak_adm
     }
 
     response = requests.post(url, headers=headers, data=payload)
-    
+
     if response.status_code != 200:
         print("API call failed.")
         if cleanup:
             print("Attempting to continue the cleanup process...")
         else:
             raise SystemExit(1)
-    
+
     response_data = response.json()
     keycloak_token = response_data.get("access_token")
 
