@@ -12,14 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard imports
 import os
 import subprocess
-import requests
-from jinja2 import Template
 import json
 import random
 import hashlib
+import string
+import secrets
+
+# Third-party imports
+import requests
+from jinja2 import Template
 import yaml
+
+# Library-specific imports
+#   None
 
 #### GLOBAL VARIABLES ####
 WORKSHOP_REPO = "harness-community/field-workshops"
@@ -445,3 +453,49 @@ def get_stage_identifier_from_dict(pipeline_dict, stage_type, service_name=None)
             else:
                 return value['identifier']
     return None
+
+
+def validate_password(password, upper, lower, digits):
+    """
+    Validate that the password contains at least one of each required character type.
+
+    :param password: str, the password to validate
+    :param upper: str, uppercase character pool
+    :param lower: str, lowercase character pool
+    :param digits: str, digit character pool
+    :return: bool, True if the password is valid, otherwise False
+    """
+    return (
+        any(char in upper for char in password) and
+        any(char in lower for char in password) and
+        any(char in digits for char in password)
+    )
+
+
+def generate_password(length=12):
+    """
+    Generate a random password with the specified length.
+
+    :param length: int, length of the password (default is 12)
+    :return: str, randomly generated password
+    """
+    if length < 4:
+        raise ValueError("Password length must be at least 4 to include all character types.")
+    if length > 50:
+        raise ValueError("Password length must not exceed 50 characters to avoid performance issues.")
+
+    upper = string.ascii_uppercase
+    lower = string.ascii_lowercase
+    digits = string.digits
+    all_characters = upper + lower + digits
+    while True:
+        password = [
+            secrets.choice(upper),
+            secrets.choice(lower),
+            secrets.choice(digits),
+        ]
+
+        password += [secrets.choice(all_characters) for _ in range(length - len(password))]
+        random.shuffle(password)  # Shuffle the password to make it random
+        if validate_password(password, upper, lower, digits):
+            return ''.join(password)
