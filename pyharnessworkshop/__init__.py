@@ -14,7 +14,7 @@
 
 __project__ = "pyharnessworkshop"
 # The version is auto-updated. Please do not edit.
-__version__ = "0.1.22"
+__version__ = "0.1.23"
 
 from . import harness
 from . import keycloak
