@@ -12,7 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard imports
+#   None
+
+# Third-party imports
 import requests
+
+# Library-specific imports
+#   None
 
 # PYDOC_RETURN_LABEL = ":return:"
 # PYDOC_FOLLOW_PARAM = ":param bool follow:"

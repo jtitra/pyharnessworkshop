@@ -12,8 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard imports
 import json
+
+# Third-party imports
 import requests
+
+# Library-specific imports
 from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####

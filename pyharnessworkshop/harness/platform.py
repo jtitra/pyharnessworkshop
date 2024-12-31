@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard imports
 import subprocess
 import time
-import requests
-import jinja2
 from pathlib import Path
 from urllib.parse import quote
+
+# Third-party imports
+import requests
+import jinja2
+
+# Library-specific imports
 from ..utils.misc import validate_yaml_content
 
 #### GLOBAL VARIABLES ####

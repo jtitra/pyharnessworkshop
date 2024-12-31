@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard imports
 import os
 import subprocess
 import time
+
+# Third-party imports
 import requests
 from kubernetes import client, utils
+
+# Library-specific imports
 from .misc import run_command
 
 # PYDOC_RETURN_LABEL = ":return:"
