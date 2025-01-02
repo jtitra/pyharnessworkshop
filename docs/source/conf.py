@@ -9,7 +9,7 @@
 project = 'pyharnessworkshop'
 copyright = '2024, Joe Titra'
 author = 'Joe Titra'
-release = '0.1.23'
+release = '0.1.24'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
