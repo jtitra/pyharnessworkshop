@@ -140,15 +140,21 @@ def run_command(command):
         print(f"Failed to execute command '{command}'. Error: {e}")
 
 
-def generate_random_suffix():
+def generate_random_suffix(length=10):
     """
-    Generates a random suffix by hashing a random number and taking the first 10 characters.
+    Generates a random suffix by hashing a random number and taking the first 'length' characters.
 
-    :return: A random suffix string of 10 characters.
+    :param length: The desired length of the random suffix (default is 10)
+    :return: A random suffix string of the specified length.
     """
-    random_number = random.randint(0, 32767)
-    md5_hash = hashlib.md5(str(random_number).encode()).hexdigest()
-    random_suffix = md5_hash[:10]
+    if length <= 0:
+        raise ValueError("Length must be a positive integer.")
+    if length > 15:
+        raise ValueError("Length must not exceed 15 characters.")
+
+    random_number = random.randint(0, 2**31 - 1)
+    sha256_hash = hashlib.sha256(str(random_number).encode()).hexdigest()
+    random_suffix = sha256_hash[:length]
     return random_suffix
 
 
