@@ -158,16 +158,17 @@ def generate_random_suffix(length=10):
     return random_suffix
 
 
-def generate_gke_credentials(generator_uri, user_name, output_file):
+def generate_gke_credentials(generator_uri, user_name, output_file, role_name):
     """
     Generate GKE cluster credentials and output to file.
 
     :param generator_uri: The URL of the GKE Generator API server.
     :param user_name: The user to generate an env/namespace for.
     :param output_file: The file to create for the new kubeconfig yaml.
+    :param role_name: The existing K8s ClusterRole to assign to the new user.
     """
     print("Getting GKE cluster credentials...")
-    payload = json.dumps({"username": user_name})
+    payload = json.dumps({"username": user_name, "rolename": role_name})
     response = requests.post(
         f"{generator_uri}/create-user",
         headers={"Content-Type": "application/json"},
