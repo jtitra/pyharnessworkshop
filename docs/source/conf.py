@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'pyharnessworkshop'
-copyright = '2024, Joe Titra'
+copyright = '2025, Joe Titra'
 author = 'Joe Titra'
 release = '0.1.25'
 
