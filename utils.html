@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils package &mdash; pyharnessworkshop 0.1.5 documentation</title>
+  <title>Utils Package &mdash; pyharnessworkshop 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,13 +15,13 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=59fadc99"></script>
+        <script src="_static/documentation_options.js?v=4fa33042"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="keycloak package" href="keycloak.html" /> 
+    <link rel="prev" title="Keycloak Package" href="keycloak.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,29 +44,52 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="harness.html">harness package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="keycloak.html">keycloak package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.instruqt">Module contents</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="harness.html">Harness Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keycloak.html">Keycloak Package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.instruqt">Auth module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.get_agent_variable"><code class="docutils literal notranslate"><span class="pre">get_agent_variable()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.raise_lab_failure_message"><code class="docutils literal notranslate"><span class="pre">raise_lab_failure_message()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.instruqt.set_agent_variable"><code class="docutils literal notranslate"><span class="pre">set_agent_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.k8s">K8s module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts"><code class="docutils literal notranslate"><span class="pre">add_k8s_service_to_hosts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.apply_k8s_manifests"><code class="docutils literal notranslate"><span class="pre">apply_k8s_manifests()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.create_k8s_secret"><code class="docutils literal notranslate"><span class="pre">create_k8s_secret()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.get_k8s_loadbalancer_ip"><code class="docutils literal notranslate"><span class="pre">get_k8s_loadbalancer_ip()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.render_manifest_from_template"><code class="docutils literal notranslate"><span class="pre">render_manifest_from_template()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.k8s.wait_for_kubernetes_api"><code class="docutils literal notranslate"><span class="pre">wait_for_kubernetes_api()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.misc">Misc module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.create_systemd_service"><code class="docutils literal notranslate"><span class="pre">create_systemd_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.fetch_template_from_url"><code class="docutils literal notranslate"><span class="pre">fetch_template_from_url()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_credentials_html"><code class="docutils literal notranslate"><span class="pre">generate_credentials_html()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_gke_credentials"><code class="docutils literal notranslate"><span class="pre">generate_gke_credentials()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_password"><code class="docutils literal notranslate"><span class="pre">generate_password()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.generate_random_suffix"><code class="docutils literal notranslate"><span class="pre">generate_random_suffix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.get_stage_identifier_from_dict"><code class="docutils literal notranslate"><span class="pre">get_stage_identifier_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.parse_pipeline"><code class="docutils literal notranslate"><span class="pre">parse_pipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.render_template_from_url"><code class="docutils literal notranslate"><span class="pre">render_template_from_url()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.revoke_gke_credentials"><code class="docutils literal notranslate"><span class="pre">revoke_gke_credentials()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.setup_vs_code"><code class="docutils literal notranslate"><span class="pre">setup_vs_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.validate_password"><code class="docutils literal notranslate"><span class="pre">validate_password()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.validate_stage_configuration"><code class="docutils literal notranslate"><span class="pre">validate_stage_configuration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.validate_steps_in_stage"><code class="docutils literal notranslate"><span class="pre">validate_steps_in_stage()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.misc.validate_yaml_content"><code class="docutils literal notranslate"><span class="pre">validate_yaml_content()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.utils.servicenow">ServiceNow module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.servicenow.add_user_to_group"><code class="docutils literal notranslate"><span class="pre">add_user_to_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.servicenow.create_user"><code class="docutils literal notranslate"><span class="pre">create_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.utils.servicenow.delete_user"><code class="docutils literal notranslate"><span class="pre">delete_user()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-information">Additional Information</a></li>
 </ul>
 </li>
 </ul>
@@ -85,7 +108,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">utils package</li>
+      <li class="breadcrumb-item active">Utils Package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,9 +119,17 @@
            <div itemprop="articleBody">
              
   <section id="utils-package">
-<h1>utils package<a class="headerlink" href="#utils-package" title="Link to this heading"></a></h1>
+<h1>Utils Package<a class="headerlink" href="#utils-package" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>This section provides an overview of the <cite>Utils</cite> package and its functionality.</p>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h2>
+<p>The <cite>Utils</cite> package includes the following modules:</p>
+</section>
 <section id="module-pyharnessworkshop.utils.instruqt">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyharnessworkshop.utils.instruqt" title="Link to this heading"></a></h2>
+<span id="auth-module"></span><h2>Auth module<a class="headerlink" href="#module-pyharnessworkshop.utils.instruqt" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.utils.instruqt.get_agent_variable">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.instruqt.</span></span><span class="sig-name descname"><span class="pre">get_agent_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/instruqt.html#get_agent_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.instruqt.get_agent_variable" title="Link to this definition"></a></dt>
@@ -138,7 +169,10 @@
 </dl>
 </dd></dl>
 
-<dl class="py function" id="module-pyharnessworkshop.utils.k8s">
+</section>
+<section id="module-pyharnessworkshop.utils.k8s">
+<span id="k8s-module"></span><h2>K8s module<a class="headerlink" href="#module-pyharnessworkshop.utils.k8s" title="Link to this heading"></a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.k8s.</span></span><span class="sig-name descname"><span class="pre">add_k8s_service_to_hosts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/k8s.html#add_k8s_service_to_hosts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.k8s.add_k8s_service_to_hosts" title="Link to this definition"></a></dt>
 <dd><p>Adds a Kubernetes service IP to the /etc/hosts file.</p>
@@ -232,7 +266,10 @@ Waits for the Kubernetes API server to become available.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function" id="module-pyharnessworkshop.utils.misc">
+</section>
+<section id="module-pyharnessworkshop.utils.misc">
+<span id="misc-module"></span><h2>Misc module<a class="headerlink" href="#module-pyharnessworkshop.utils.misc" title="Link to this heading"></a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.create_systemd_service">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">create_systemd_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#create_systemd_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.create_systemd_service" title="Link to this definition"></a></dt>
 <dd><p>Creates a systemd service file and enables it to start on boot.</p>
@@ -241,6 +278,20 @@ Waits for the Kubernetes API server to become available.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>service_content</strong> – The content to populate the .service file.</p></li>
 <li><p><strong>service_name</strong> – The name of the service to create.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.fetch_template_from_url">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">fetch_template_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#fetch_template_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.fetch_template_from_url" title="Link to this definition"></a></dt>
+<dd><p>Fetches a Jinja2 template from a URL and outputs it to the specified file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template_path</strong> – The path in the repo of the Jinja2 template to fetch.</p></li>
+<li><p><strong>output_file</strong> – A file to output the template to.</p></li>
 </ul>
 </dd>
 </dl>
@@ -276,12 +327,78 @@ Waits for the Kubernetes API server to become available.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_random_suffix">
-<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_random_suffix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_random_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_random_suffix" title="Link to this definition"></a></dt>
-<dd><p>Generates a random suffix by hashing a random number and taking the first 10 characters.</p>
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_password">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_password" title="Link to this definition"></a></dt>
+<dd><p>Generate a random password with the specified length.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A random suffix string of 10 characters.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> – int, length of the password (default is 12)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, randomly generated password</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.generate_random_suffix">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">generate_random_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#generate_random_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.generate_random_suffix" title="Link to this definition"></a></dt>
+<dd><p>Generates a random suffix by hashing a random number and taking the first ‘length’ characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> – The desired length of the random suffix (default is 10)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A random suffix string of the specified length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.get_stage_identifier_from_dict">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">get_stage_identifier_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#get_stage_identifier_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.get_stage_identifier_from_dict" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the identifier of a stage based on the stage type and an optional service name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pipeline_dict</strong> – Dictionary containing stages with their details.</p></li>
+<li><p><strong>stage_type</strong> – The type of the stage to filter.</p></li>
+<li><p><strong>service_name</strong> – (Optional) The name of the service to filter within the stage type.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The identifier of the matching stage, or None if no match is found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.parse_pipeline">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">parse_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#parse_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.parse_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Parses a YAML string representing a pipeline configuration and extracts the stages into a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_str</strong> – A string containing the YAML representation of the pipeline configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the stage names as keys and their respective details as values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.render_template_from_url">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">render_template_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#render_template_from_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.render_template_from_url" title="Link to this definition"></a></dt>
+<dd><p>Fetches a Jinja2 template from a URL and renders it with the provided context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context</strong> – A dictionary containing the context for rendering the template.</p></li>
+<li><p><strong>template_path</strong> – The path in the repo of the Jinja2 template to fetch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rendered content as a string, or None if an error occurs.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,6 +443,61 @@ Waits for the Kubernetes API server to become available.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.validate_password">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">validate_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#validate_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.validate_password" title="Link to this definition"></a></dt>
+<dd><p>Validate that the password contains at least one of each required character type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> – str, the password to validate</p></li>
+<li><p><strong>upper</strong> – str, uppercase character pool</p></li>
+<li><p><strong>lower</strong> – str, lowercase character pool</p></li>
+<li><p><strong>digits</strong> – str, digit character pool</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, True if the password is valid, otherwise False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.validate_stage_configuration">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">validate_stage_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stages_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#validate_stage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.validate_stage_configuration" title="Link to this definition"></a></dt>
+<dd><p>Validates the configuration of a given stage against the provided stage context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stages_dict</strong> – Dictionary containing stages with their details.</p></li>
+<li><p><strong>stage_id</strong> – The ID of the stage to filter.</p></li>
+<li><p><strong>stage_context</strong> – A dictionary of stage configurations and their expected values to validate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of mismatches, where each mismatch is a dictionary containing the path and details of the discrepancy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.validate_steps_in_stage">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">validate_steps_in_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stages_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#validate_steps_in_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.validate_steps_in_stage" title="Link to this definition"></a></dt>
+<dd><p>Validates steps in a given stage type against the provided step context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stages_dict</strong> – Dictionary containing stages with their details.</p></li>
+<li><p><strong>stage_id</strong> – The ID of the stage to filter.</p></li>
+<li><p><strong>step_context</strong> – A dictionary of steps and their expected values to validate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of misconfigured_steps.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.utils.misc.validate_yaml_content">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.misc.</span></span><span class="sig-name descname"><span class="pre">validate_yaml_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/misc.html#validate_yaml_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.misc.validate_yaml_content" title="Link to this definition"></a></dt>
 <dd><p>Validates provided YAML data.</p>
@@ -337,19 +509,88 @@ Waits for the Kubernetes API server to become available.</p>
 </dd></dl>
 
 </section>
+<section id="module-pyharnessworkshop.utils.servicenow">
+<span id="servicenow-module"></span><h2>ServiceNow module<a class="headerlink" href="#module-pyharnessworkshop.utils.servicenow" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.servicenow.add_user_to_group">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.servicenow.</span></span><span class="sig-name descname"><span class="pre">add_user_to_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_sys_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Workshop</span> <span class="pre">Users'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/servicenow.html#add_user_to_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.servicenow.add_user_to_group" title="Link to this definition"></a></dt>
+<dd><p>Adds a user to a group via the sys_user_grmember table API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sn_instance</strong> – The ServiceNow instance name.</p></li>
+<li><p><strong>sn_username</strong> – The ServiceNow username.</p></li>
+<li><p><strong>sn_password</strong> – The ServiceNow password.</p></li>
+<li><p><strong>user_sys_id</strong> – The sys_id of the user to add to the group.</p></li>
+<li><p><strong>group_name</strong> – The name of the group (default is “Workshop Users”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sys_id of the membership record created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.servicenow.create_user">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.servicenow.</span></span><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/servicenow.html#create_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.servicenow.create_user" title="Link to this definition"></a></dt>
+<dd><p>Creates a ServiceNow user via the sys_user table API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sn_instance</strong> – The ServiceNow instance name.</p></li>
+<li><p><strong>sn_username</strong> – The ServiceNow username.</p></li>
+<li><p><strong>sn_password</strong> – The ServiceNow password.</p></li>
+<li><p><strong>first_name</strong> – The first name of the user.</p></li>
+<li><p><strong>last_name</strong> – The last name of the user.</p></li>
+<li><p><strong>user_name</strong> – The username for the new user.</p></li>
+<li><p><strong>email</strong> – The email address of the user.</p></li>
+<li><p><strong>password</strong> – The password for the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sys_id of the newly created user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.utils.servicenow.delete_user">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.utils.servicenow.</span></span><span class="sig-name descname"><span class="pre">delete_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sn_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/utils/servicenow.html#delete_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.utils.servicenow.delete_user" title="Link to this definition"></a></dt>
+<dd><p>Deletes a ServiceNow user by sys_id via the sys_user table API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sn_instance</strong> – The ServiceNow instance name.</p></li>
+<li><p><strong>sn_username</strong> – The ServiceNow username.</p></li>
+<li><p><strong>sn_password</strong> – The ServiceNow password.</p></li>
+<li><p><strong>sys_id</strong> – The sys_id of the user to be deleted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="additional-information">
+<h2>Additional Information<a class="headerlink" href="#additional-information" title="Link to this heading"></a></h2>
+<p>For more details on specific classes and functions, refer to the module documentation above.</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="keycloak.html" class="btn btn-neutral float-left" title="keycloak package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="keycloak.html" class="btn btn-neutral float-left" title="Keycloak Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Joe Titra.</p>
+    <p>&#169; Copyright 2025, Joe Titra.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

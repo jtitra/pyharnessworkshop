@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>harness package &mdash; pyharnessworkshop 0.1.5 documentation</title>
+  <title>Harness Package &mdash; pyharnessworkshop 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,12 +15,14 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=59fadc99"></script>
+        <script src="_static/documentation_options.js?v=4fa33042"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Keycloak Package" href="keycloak.html" />
+    <link rel="prev" title="Welcome to pyharnessworkshop’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,11 +44,59 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="harness.chaos.html">harness.chaos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="harness.platform.html">harness.platform package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="keycloak.html">keycloak package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Harness Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.harness.chaos">Chaos module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.add_probe"><code class="docutils literal notranslate"><span class="pre">add_probe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.generate_hce_id"><code class="docutils literal notranslate"><span class="pre">generate_hce_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.get_manifest_for_infra"><code class="docutils literal notranslate"><span class="pre">get_manifest_for_infra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.make_api_call"><code class="docutils literal notranslate"><span class="pre">make_api_call()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.parse_experiment_run_report"><code class="docutils literal notranslate"><span class="pre">parse_experiment_run_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.register_infra"><code class="docutils literal notranslate"><span class="pre">register_infra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.chaos.supported_api_methods"><code class="docutils literal notranslate"><span class="pre">supported_api_methods()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyharnessworkshop.harness.platform">Platform module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.add_user_to_user_group"><code class="docutils literal notranslate"><span class="pre">add_user_to_user_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_harness_delegate"><code class="docutils literal notranslate"><span class="pre">create_harness_delegate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_harness_pipeline"><code class="docutils literal notranslate"><span class="pre">create_harness_pipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_harness_project"><code class="docutils literal notranslate"><span class="pre">create_harness_project()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_project_connector"><code class="docutils literal notranslate"><span class="pre">create_project_connector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_project_secret"><code class="docutils literal notranslate"><span class="pre">create_project_secret()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_service"><code class="docutils literal notranslate"><span class="pre">create_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.create_user_group"><code class="docutils literal notranslate"><span class="pre">create_user_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.delete_harness_project"><code class="docutils literal notranslate"><span class="pre">delete_harness_project()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.delete_harness_user"><code class="docutils literal notranslate"><span class="pre">delete_harness_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.delete_matching_idp_catalog_ids"><code class="docutils literal notranslate"><span class="pre">delete_matching_idp_catalog_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.deploy_harness_delegate"><code class="docutils literal notranslate"><span class="pre">deploy_harness_delegate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.execute_pipeline"><code class="docutils literal notranslate"><span class="pre">execute_pipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.find_ids_with_target"><code class="docutils literal notranslate"><span class="pre">find_ids_with_target()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.generate_delegate_token"><code class="docutils literal notranslate"><span class="pre">generate_delegate_token()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_all_idp_catalog_items"><code class="docutils literal notranslate"><span class="pre">get_all_idp_catalog_items()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_harness_user_id"><code class="docutils literal notranslate"><span class="pre">get_harness_user_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_latest_delegate_tag"><code class="docutils literal notranslate"><span class="pre">get_latest_delegate_tag()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_latest_docker_delegate_tag"><code class="docutils literal notranslate"><span class="pre">get_latest_docker_delegate_tag()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_pipeline_by_id"><code class="docutils literal notranslate"><span class="pre">get_pipeline_by_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_pipeline_yaml"><code class="docutils literal notranslate"><span class="pre">get_pipeline_yaml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.get_service_by_id"><code class="docutils literal notranslate"><span class="pre">get_service_by_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.invite_user_to_harness_project"><code class="docutils literal notranslate"><span class="pre">invite_user_to_harness_project()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.invite_user_to_harness_project_loop"><code class="docutils literal notranslate"><span class="pre">invite_user_to_harness_project_loop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.list_pipelines"><code class="docutils literal notranslate"><span class="pre">list_pipelines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.list_services"><code class="docutils literal notranslate"><span class="pre">list_services()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.remove_user_from_user_group"><code class="docutils literal notranslate"><span class="pre">remove_user_from_user_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.update_pipeline"><code class="docutils literal notranslate"><span class="pre">update_pipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.update_repo_security_settings"><code class="docutils literal notranslate"><span class="pre">update_repo_security_settings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.update_service"><code class="docutils literal notranslate"><span class="pre">update_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyharnessworkshop.harness.platform.verify_harness_login"><code class="docutils literal notranslate"><span class="pre">verify_harness_login()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-information">Additional Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="keycloak.html">Keycloak Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils Package</a></li>
 </ul>
 
         </div>
@@ -63,7 +113,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">harness package</li>
+      <li class="breadcrumb-item active">Harness Package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/harness.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,9 +124,17 @@
            <div itemprop="articleBody">
              
   <section id="harness-package">
-<h1>harness package<a class="headerlink" href="#harness-package" title="Link to this heading"></a></h1>
+<h1>Harness Package<a class="headerlink" href="#harness-package" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>This section provides an overview of the <cite>Harness</cite> package and its functionality.</p>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h2>
+<p>The <cite>Harness</cite> package includes the following modules:</p>
+</section>
 <section id="module-pyharnessworkshop.harness.chaos">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyharnessworkshop.harness.chaos" title="Link to this heading"></a></h2>
+<span id="chaos-module"></span><h2>Chaos module<a class="headerlink" href="#module-pyharnessworkshop.harness.chaos" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.add_probe">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">add_probe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#add_probe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.add_probe" title="Link to this definition"></a></dt>
@@ -140,7 +198,7 @@
 <li><p><strong>account_id</strong> – The account identifier</p></li>
 <li><p><strong>org_id</strong> – The organization identifier</p></li>
 <li><p><strong>project_id</strong> – The project identifier</p></li>
-<li><p><strong>query_type</strong> – The type of query to be executed (e.g., ‘register_infra’, ‘add_probe’)</p></li>
+<li><p><strong>query_type</strong> – The type of query to be executed (e.g., ‘register_infra’, ‘add_probe’, ‘stop_all_chaos’)</p></li>
 <li><p><strong>request_variables</strong> – The variables to be included in the request payload</p></li>
 </ul>
 </dd>
@@ -152,6 +210,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.parse_experiment_run_report">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">parse_experiment_run_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#parse_experiment_run_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.parse_experiment_run_report" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.register_infra">
@@ -177,14 +240,20 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.chaos.supported_api_methods">
-<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">supported_api_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#supported_api_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.supported_api_methods" title="Link to this definition"></a></dt>
-<dd><p>Returns the query data for the specified request type.</p>
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.chaos.</span></span><span class="sig-name descname"><span class="pre">supported_api_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/chaos.html#supported_api_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.chaos.supported_api_methods" title="Link to this definition"></a></dt>
+<dd><p>Returns the payload for the specified request type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>request_type</strong> – The type of request (e.g., ‘register_infra’, ‘add_probe’)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request_type</strong> – The type of request (e.g., ‘register_infra’, ‘add_probe’, ‘stop_all_chaos’)</p></li>
+<li><p><strong>account_id</strong> – The account identifier</p></li>
+<li><p><strong>org_id</strong> – The organization identifier</p></li>
+<li><p><strong>project_id</strong> – The project identifier</p></li>
+<li><p><strong>request_variables</strong> – The variables to be included in the request payload</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary containing the mutation, request type, and return fields for the specified request type</p>
+<dd class="field-even"><p>A dictionary containing the complete payload for the specified request type</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If the request type is unsupported</p>
@@ -192,7 +261,26 @@
 </dl>
 </dd></dl>
 
-<dl class="py function" id="module-pyharnessworkshop.harness.platform">
+</section>
+<section id="module-pyharnessworkshop.harness.platform">
+<span id="platform-module"></span><h2>Platform module<a class="headerlink" href="#module-pyharnessworkshop.harness.platform" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.add_user_to_user_group">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">add_user_to_user_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_group_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#add_user_to_user_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.add_user_to_user_group" title="Link to this definition"></a></dt>
+<dd><p>Adds a user to a Harness user group based on their email.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>user_email</strong> – The email of the user to add to the group.</p></li>
+<li><p><strong>user_group_id</strong> – The ID of the user group in Harness.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.create_harness_delegate">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">create_harness_delegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#create_harness_delegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.create_harness_delegate" title="Link to this definition"></a></dt>
 <dd><p>Creates a project-level delegate in Harness.</p>
@@ -242,6 +330,75 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.create_project_connector">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">create_project_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#create_project_connector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.create_project_connector" title="Link to this definition"></a></dt>
+<dd><p>Creates a connector in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>input_yaml</strong> – The Harness connector YAML payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.create_project_secret">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">create_project_secret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#create_project_secret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.create_project_secret" title="Link to this definition"></a></dt>
+<dd><p>Creates a secret in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>input_yaml</strong> – The Harness secret YAML payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.create_service">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">create_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#create_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.create_service" title="Link to this definition"></a></dt>
+<dd><p>Creates a service in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>service_yaml</strong> – The Harness service YAML payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.create_user_group">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">create_user_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#create_user_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.create_user_group" title="Link to this definition"></a></dt>
+<dd><p>Creates a user group in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>group_name</strong> – The name of the group to create.</p></li>
+<li><p><strong>users</strong> – Array of user IDs to add to the group.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.delete_harness_project">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">delete_harness_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#delete_harness_project"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.delete_harness_project" title="Link to this definition"></a></dt>
 <dd><p>Deletes a project in Harness.</p>
@@ -275,6 +432,115 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.delete_matching_idp_catalog_ids">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">delete_matching_idp_catalog_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idp_account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matching_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#delete_matching_idp_catalog_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.delete_matching_idp_catalog_ids" title="Link to this definition"></a></dt>
+<dd><p>Iterates over matching IDs and deletes them via the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>idp_account_id</strong> – The IDP account/instance ID. Different from the Harness account ID.</p></li>
+<li><p><strong>matching_ids</strong> – List of IDs to delete.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.deploy_harness_delegate">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">deploy_harness_delegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delegate_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#deploy_harness_delegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.deploy_harness_delegate" title="Link to this definition"></a></dt>
+<dd><p>Deploys a Harness delegate using the provided template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>template_path</strong> – The path to the delegate template file.</p></li>
+<li><p><strong>delegate_name</strong> – The name to assign to the delegate.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.execute_pipeline">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">execute_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_yaml</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#execute_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.execute_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Executes a Harness pipeline with the specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>pipeline_id</strong> – The identifier of the pipeline to execute.</p></li>
+<li><p><strong>execution_yaml</strong> – The YAML content for the pipeline execution.</p></li>
+<li><p><strong>execution_notes</strong> – Notes for the pipeline execution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.find_ids_with_target">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">find_ids_with_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#find_ids_with_target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.find_ids_with_target" title="Link to this definition"></a></dt>
+<dd><p>Finds all IDs where the target field contains the specified search string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – List of dictionaries containing target data.</p></li>
+<li><p><strong>search_string</strong> – String to search for in the target field.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of IDs matching the search criteria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.generate_delegate_token">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">generate_delegate_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#generate_delegate_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.generate_delegate_token" title="Link to this definition"></a></dt>
+<dd><p>Generates a delegate token for the specified Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>token_name</strong> – The name to assign to the generated token.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated delegate token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_all_idp_catalog_items">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_all_idp_catalog_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idp_account_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_all_idp_catalog_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_all_idp_catalog_items" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all items from the IDP catalog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>idp_account_id</strong> – The IDP account/instance ID. Different from the Harness account ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of items (JSON).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_harness_user_id">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_harness_user_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_harness_user_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_harness_user_id" title="Link to this definition"></a></dt>
 <dd><p>Gets the Harness user ID based on the search term.</p>
@@ -288,6 +554,88 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The user ID if found, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_latest_delegate_tag">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_latest_delegate_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_latest_delegate_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_latest_delegate_tag" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the latest supported version for the Harness delegate image for the given account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The latest supported version for the Harness delegate image.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the latest supported version is not found in the response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_latest_docker_delegate_tag">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_latest_docker_delegate_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_latest_docker_delegate_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_latest_docker_delegate_tag" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the latest tag for the Harness delegate image from Docker Hub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The latest full tag for the Harness delegate image.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no full tags are found in the repository.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_pipeline_by_id">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_pipeline_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_pipeline_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_pipeline_by_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a pipeline from the provided JSON response by its identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json_response</strong> – The JSON response containing the list of pipelines.</p></li>
+<li><p><strong>pipeline_id</strong> – The identifier of the pipeline to retrieve.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The pipeline data if found, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_pipeline_yaml">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_pipeline_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_pipeline_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_pipeline_yaml" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the YAML content of a specified Harness pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>pipeline_id</strong> – The identifier of the pipeline to retrieve.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The YAML content of the pipeline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.get_service_by_id">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">get_service_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#get_service_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.get_service_by_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a service from the provided JSON response by its identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json_response</strong> – The JSON response containing the list of services.</p></li>
+<li><p><strong>service_id</strong> – The identifier of the service to retrieve.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The service data if found, otherwise None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -327,6 +675,115 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.list_pipelines">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">list_pipelines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#list_pipelines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.list_pipelines" title="Link to this definition"></a></dt>
+<dd><p>Lists all pipelines in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A JSON response containing the list of pipelines.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.list_services">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">list_services</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#list_services"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.list_services" title="Link to this definition"></a></dt>
+<dd><p>Lists all services in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A JSON response containing the list of services.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.remove_user_from_user_group">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">remove_user_from_user_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_group_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#remove_user_from_user_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.remove_user_from_user_group" title="Link to this definition"></a></dt>
+<dd><p>Removes a user to a Harness user group based on their email.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>user_email</strong> – The email of the user to remove from the group.</p></li>
+<li><p><strong>user_group_id</strong> – The ID of the user group in Harness.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.update_pipeline">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">update_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#update_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.update_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing pipeline in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>pipeline_id</strong> – The identifier of the pipeline to update.</p></li>
+<li><p><strong>pipeline_yaml</strong> – The Harness pipeline YAML payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.update_repo_security_settings">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">update_repo_security_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secret_scanning_enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vulnerability_scanning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'disabled'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#update_repo_security_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.update_repo_security_settings" title="Link to this definition"></a></dt>
+<dd><p>Updates the security settings for a repository in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>repo_identifier</strong> – The identifier for the repository.</p></li>
+<li><p><strong>secret_scanning_enabled</strong> – Boolean flag to enable/disable secret scanning.</p></li>
+<li><p><strong>vulnerability_scanning_mode</strong> – Mode for vulnerability scanning.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.update_service">
+<span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">update_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#update_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.update_service" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing service in the provided Harness project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> – The API key for accessing Harness API.</p></li>
+<li><p><strong>account_id</strong> – The account ID in Harness.</p></li>
+<li><p><strong>org_id</strong> – The organization ID in Harness.</p></li>
+<li><p><strong>project_id</strong> – The project ID in Harness.</p></li>
+<li><p><strong>service_id</strong> – The identifier of the service to update.</p></li>
+<li><p><strong>service_yaml</strong> – The Harness service YAML payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyharnessworkshop.harness.platform.verify_harness_login">
 <span class="sig-prename descclassname"><span class="pre">pyharnessworkshop.harness.platform.</span></span><span class="sig-name descname"><span class="pre">verify_harness_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyharnessworkshop/harness/platform.html#verify_harness_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyharnessworkshop.harness.platform.verify_harness_login" title="Link to this definition"></a></dt>
 <dd><p>Verifies the login of a user in Harness by checking the audit logs.</p>
@@ -345,17 +802,24 @@
 </dd></dl>
 
 </section>
+<section id="additional-information">
+<h2>Additional Information<a class="headerlink" href="#additional-information" title="Link to this heading"></a></h2>
+<p>For more details on specific classes and functions, refer to the module documentation above.</p>
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pyharnessworkshop’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="keycloak.html" class="btn btn-neutral float-right" title="Keycloak Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Joe Titra.</p>
+    <p>&#169; Copyright 2025, Joe Titra.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyharnessworkshop.harness.platform &mdash; pyharnessworkshop 0.1.5 documentation</title>
+  <title>pyharnessworkshop.harness.platform &mdash; pyharnessworkshop 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+        <script src="../../../_static/documentation_options.js?v=4fa33042"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -42,9 +42,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">harness package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">keycloak package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">Harness Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">Keycloak Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils Package</a></li>
 </ul>
 
         </div>
@@ -86,13 +86,22 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="c1"># Standard imports</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
+
+<span class="c1"># Third-party imports</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">jinja2</span>
+
+<span class="c1"># Library-specific imports</span>
 <span class="kn">from</span> <span class="nn">..utils.misc</span> <span class="kn">import</span> <span class="n">validate_yaml_content</span>
 
 <span class="c1">#### GLOBAL VARIABLES ####</span>
 <span class="n">HARNESS_API</span> <span class="o">=</span> <span class="s2">&quot;https://app.harness.io&quot;</span>
+<span class="n">HARNESS_IDP_API</span> <span class="o">=</span> <span class="s2">&quot;https://idp.harness.io&quot;</span>
 
 <span class="c1"># PYDOC_RETURN_LABEL = &quot;:return:&quot;</span>
 <span class="c1"># PYDOC_FOLLOW_PARAM = &quot;:param bool follow:&quot;</span>
@@ -420,6 +429,684 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="update_pipeline">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.update_pipeline">[docs]</a>
+<span class="k">def</span> <span class="nf">update_pipeline</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">,</span> <span class="n">pipeline_yaml</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates an existing pipeline in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param pipeline_id: The identifier of the pipeline to update.</span>
+<span class="sd">    :param pipeline_yaml: The Harness pipeline YAML payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/pipeline/api/pipelines/v2/</span><span class="si">{</span><span class="n">pipeline_id</span><span class="si">}</span><span class="s2">?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/yaml&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+
+    <span class="n">validate_yaml_content</span><span class="p">(</span><span class="n">pipeline_yaml</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pipeline_yaml</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully updated Harness pipeline.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_pipelines">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.list_pipelines">[docs]</a>
+<span class="k">def</span> <span class="nf">list_pipelines</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lists all pipelines in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :return: A JSON response containing the list of pipelines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/pipeline/api/pipelines/list?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;filterType&quot;</span><span class="p">:</span> <span class="s2">&quot;PipelineSetup&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Raises HTTPError if the response status is 4xx/5xx</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;API errors: </span><span class="si">{</span><span class="n">json_response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json_response</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP error occurred: </span><span class="si">{</span><span class="n">http_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Other error occurred: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_pipeline_by_id">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_pipeline_by_id">[docs]</a>
+<span class="k">def</span> <span class="nf">get_pipeline_by_id</span><span class="p">(</span><span class="n">json_response</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves a pipeline from the provided JSON response by its identifier.</span>
+
+<span class="sd">    :param json_response: The JSON response containing the list of pipelines.</span>
+<span class="sd">    :param pipeline_id: The identifier of the pipeline to retrieve.</span>
+<span class="sd">    :return: The pipeline data if found, otherwise None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project only contains a single pipeline.&quot;</span><span class="p">)</span>
+            <span class="n">identifier</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single pipeline identifier: </span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project contains multiple pipelines.&quot;</span><span class="p">)</span>
+            <span class="n">target_pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">pipeline_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">target_pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">target_pipeline</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found pipeline: </span><span class="si">{</span><span class="n">target_pipeline</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;identifier&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">target_pipeline</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No pipeline with identifier &#39;</span><span class="si">{</span><span class="n">pipeline_id</span><span class="si">}</span><span class="s2">&#39; found.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;API call failed or returned an unsuccessful status.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_project_secret">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.create_project_secret">[docs]</a>
+<span class="k">def</span> <span class="nf">create_project_secret</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">input_yaml</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a secret in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param input_yaml: The Harness secret YAML payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/v1/orgs/</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">/secrets&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/yaml&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">,</span>
+        <span class="s2">&quot;Harness-Account&quot;</span><span class="p">:</span> <span class="n">account_id</span>
+    <span class="p">}</span>
+
+    <span class="n">validate_yaml_content</span><span class="p">(</span><span class="n">input_yaml</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">input_yaml</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully created Harness secret.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_project_connector">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.create_project_connector">[docs]</a>
+<span class="k">def</span> <span class="nf">create_project_connector</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">input_yaml</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a connector in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param input_yaml: The Harness connector YAML payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/gateway/ng/api/connectors/?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;text/yaml&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+
+    <span class="n">validate_yaml_content</span><span class="p">(</span><span class="n">input_yaml</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">input_yaml</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully created Harness connector.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deploy_harness_delegate">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.deploy_harness_delegate">[docs]</a>
+<span class="k">def</span> <span class="nf">deploy_harness_delegate</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">template_path</span><span class="p">,</span> <span class="n">delegate_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deploys a Harness delegate using the provided template.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param template_path: The path to the delegate template file.</span>
+<span class="sd">    :param delegate_name: The name to assign to the delegate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">template_path</span><span class="p">)</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_path</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">/harness-delegate.yaml&quot;</span>
+    <span class="n">delegate_token</span> <span class="o">=</span> <span class="n">generate_delegate_token</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">delegate_name</span><span class="si">}</span><span class="s2">-token&quot;</span><span class="p">)</span>
+    <span class="n">delegate_image</span> <span class="o">=</span> <span class="n">get_latest_delegate_tag</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">jinja2</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">rendered_content</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+        <span class="n">delegate_name</span><span class="o">=</span><span class="n">delegate_name</span><span class="p">,</span>
+        <span class="n">account_id</span><span class="o">=</span><span class="n">account_id</span><span class="p">,</span>
+        <span class="n">delegate_token</span><span class="o">=</span><span class="n">delegate_token</span><span class="p">,</span>
+        <span class="n">delegate_image</span><span class="o">=</span><span class="n">delegate_image</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rendered_content</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">validate_yaml_content</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;kubectl&quot;</span><span class="p">,</span> <span class="s2">&quot;apply&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ERROR: Failed to apply the provided YAML.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_delegate_token">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.generate_delegate_token">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_delegate_token</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">token_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a delegate token for the specified Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param token_name: The name to assign to the generated token.</span>
+<span class="sd">    :return: The generated delegate token.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/delegate-token-ng?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&amp;tokenName=</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">response_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resource&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_latest_docker_delegate_tag">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_latest_docker_delegate_tag">[docs]</a>
+<span class="k">def</span> <span class="nf">get_latest_docker_delegate_tag</span><span class="p">(</span><span class="n">latest</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the latest tag for the Harness delegate image from Docker Hub.</span>
+
+<span class="sd">    :return: The latest full tag for the Harness delegate image.</span>
+<span class="sd">    :raises ValueError: If no full tags are found in the repository.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://hub.docker.com/v2/repositories/harness/delegate/tags&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;ordering&quot;</span><span class="p">:</span> <span class="s2">&quot;last_updated&quot;</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+    <span class="n">full_tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span> <span class="k">if</span> <span class="s2">&quot;minimal&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">full_tags</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No full tags found in the repository.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">full_tags</span><span class="p">[</span><span class="n">latest</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="get_latest_delegate_tag">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_latest_delegate_tag">[docs]</a>
+<span class="k">def</span> <span class="nf">get_latest_delegate_tag</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the latest supported version for the Harness delegate image for the given account.</span>
+
+<span class="sd">    :return: The latest supported version for the Harness delegate image.</span>
+<span class="sd">    :raises ValueError: If the latest supported version is not found in the response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/delegate-setup/latest-supported-version?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="n">latest_version</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resource&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;latestSupportedVersion&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">latest_version</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Latest supported version not found in the response.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">latest_version</span></div>
+
+
+
+<div class="viewcode-block" id="update_repo_security_settings">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.update_repo_security_settings">[docs]</a>
+<span class="k">def</span> <span class="nf">update_repo_security_settings</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">repo_identifier</span><span class="p">,</span> <span class="n">secret_scanning_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vulnerability_scanning_mode</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the security settings for a repository in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param repo_identifier: The identifier for the repository.</span>
+<span class="sd">    :param secret_scanning_enabled: Boolean flag to enable/disable secret scanning.</span>
+<span class="sd">    :param vulnerability_scanning_mode: Mode for vulnerability scanning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/code/api/v1/repos/</span><span class="si">{</span><span class="n">repo_identifier</span><span class="si">}</span><span class="s2">/settings/security?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;secret_scanning_enabled&quot;</span><span class="p">:</span> <span class="n">secret_scanning_enabled</span><span class="p">,</span>
+        <span class="s2">&quot;vulnerability_scanning_mode&quot;</span><span class="p">:</span> <span class="n">vulnerability_scanning_mode</span>
+    <span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;INFO: Successfully updated repository security settings.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_service">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.create_service">[docs]</a>
+<span class="k">def</span> <span class="nf">create_service</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">service_yaml</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a service in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param service_yaml: The Harness service YAML payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/servicesV2?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">service_yaml</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully created Harness service.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_services">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.list_services">[docs]</a>
+<span class="k">def</span> <span class="nf">list_services</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lists all services in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :return: A JSON response containing the list of services.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/servicesV2?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Raises HTTPError if the response status is 4xx/5xx</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;API errors: </span><span class="si">{</span><span class="n">json_response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json_response</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP error occurred: </span><span class="si">{</span><span class="n">http_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Other error occurred: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_service">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.update_service">[docs]</a>
+<span class="k">def</span> <span class="nf">update_service</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">service_id</span><span class="p">,</span> <span class="n">service_yaml</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates an existing service in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param service_id: The identifier of the service to update.</span>
+<span class="sd">    :param service_yaml: The Harness service YAML payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/servicesV2?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">service_yaml</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully updated Harness service.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_service_by_id">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_service_by_id">[docs]</a>
+<span class="k">def</span> <span class="nf">get_service_by_id</span><span class="p">(</span><span class="n">json_response</span><span class="p">,</span> <span class="n">service_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves a service from the provided JSON response by its identifier.</span>
+
+<span class="sd">    :param json_response: The JSON response containing the list of services.</span>
+<span class="sd">    :param service_id: The identifier of the service to retrieve.</span>
+<span class="sd">    :return: The service data if found, otherwise None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">json_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project only contains a single service.&quot;</span><span class="p">)</span>
+            <span class="n">identifier</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single service identifier: </span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">identifier</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">service_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project contains multiple services.&quot;</span><span class="p">)</span>
+            <span class="n">target_service</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">service_data</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">service</span> <span class="o">=</span> <span class="n">service_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">if</span> <span class="n">service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">service_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">target_service</span> <span class="o">=</span> <span class="n">service</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">target_service</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found service: </span><span class="si">{</span><span class="n">target_service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;identifier&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">target_service</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No service with identifier &#39;</span><span class="si">{</span><span class="n">service_id</span><span class="si">}</span><span class="s2">&#39; found.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;API call failed or returned an unsuccessful status.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_user_group">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.create_user_group">[docs]</a>
+<span class="k">def</span> <span class="nf">create_user_group</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a user group in the provided Harness project.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param group_name: The name of the group to create.</span>
+<span class="sd">    :param users: Array of user IDs to add to the group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">users</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/ng/api/user-groups?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">group_identifer</span> <span class="o">=</span> <span class="n">group_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_identifer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="n">users</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Successfully created Harness Group.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="execute_pipeline">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.execute_pipeline">[docs]</a>
+<span class="k">def</span> <span class="nf">execute_pipeline</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">,</span> <span class="n">execution_yaml</span><span class="p">,</span> <span class="n">execution_notes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes a Harness pipeline with the specified parameters.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param pipeline_id: The identifier of the pipeline to execute.</span>
+<span class="sd">    :param execution_yaml: The YAML content for the pipeline execution.</span>
+<span class="sd">    :param execution_notes: Notes for the pipeline execution.</span>
+<span class="sd">    :return: The response from the API call.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/gateway/pipeline/api/pipeline/execute/</span><span class="si">{</span><span class="n">pipeline_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">query_params</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">execution_notes</span><span class="p">:</span>
+        <span class="n">encoded_execution_notes</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">execution_notes</span><span class="p">)</span>
+        <span class="n">query_params</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;notesForPipelineExecution=</span><span class="si">{</span><span class="n">encoded_execution_notes</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">query_params</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/yaml&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">execution_yaml</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  INFO: Pipeline execution started successfully.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_pipeline_yaml">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_pipeline_yaml">[docs]</a>
+<span class="k">def</span> <span class="nf">get_pipeline_yaml</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the YAML content of a specified Harness pipeline.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param org_id: The organization ID in Harness.</span>
+<span class="sd">    :param project_id: The project ID in Harness.</span>
+<span class="sd">    :param pipeline_id: The identifier of the pipeline to retrieve.</span>
+<span class="sd">    :return: The YAML content of the pipeline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/gateway/pipeline/api/pipelines/</span><span class="si">{</span><span class="n">pipeline_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&amp;orgIdentifier=</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&amp;projectIdentifier=</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Load-From-Cache&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">pipeline_yaml</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;yamlPipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline_yaml</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: Request failed. Status Code: </span><span class="si">{</span><span class="n">response_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response Content: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="add_user_to_user_group">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.add_user_to_user_group">[docs]</a>
+<span class="k">def</span> <span class="nf">add_user_to_user_group</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">user_group_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a user to a Harness user group based on their email.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param user_email: The email of the user to add to the group.</span>
+<span class="sd">    :param user_group_id: The ID of the user group in Harness.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Harness User ID for user: </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_harness_user_id</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ERROR: Failed to determine the User ID.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Got Harness User ID: </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Adding ID: </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2"> to Group: </span><span class="si">{</span><span class="n">user_group_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/gateway/ng/api/user-groups/</span><span class="si">{</span><span class="n">user_group_id</span><span class="si">}</span><span class="s2">/member/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">response_status</span> <span class="o">=</span> <span class="n">response_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response_status</span> <span class="o">==</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  User was successfully added to group.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Failed to add user to group. Response: </span><span class="si">{</span><span class="n">response_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_user_from_user_group">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.remove_user_from_user_group">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_user_from_user_group</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">user_group_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes a user to a Harness user group based on their email.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param account_id: The account ID in Harness.</span>
+<span class="sd">    :param user_email: The email of the user to remove from the group.</span>
+<span class="sd">    :param user_group_id: The ID of the user group in Harness.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Harness User ID for user: </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_harness_user_id</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ERROR: Failed to determine the User ID.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Got Harness User ID: </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Removing ID: </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2"> from Group: </span><span class="si">{</span><span class="n">user_group_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_API</span><span class="si">}</span><span class="s2">/gateway/ng/api/user-groups/</span><span class="si">{</span><span class="n">user_group_id</span><span class="si">}</span><span class="s2">/member/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">?accountIdentifier=</span><span class="si">{</span><span class="n">account_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">response_status</span> <span class="o">=</span> <span class="n">response_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response_status</span> <span class="o">==</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  User was successfully removed from group.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: Failed to remove user from group. Response: </span><span class="si">{</span><span class="n">response_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_idp_catalog_items">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.get_all_idp_catalog_items">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_idp_catalog_items</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">idp_account_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves all items from the IDP catalog.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param idp_account_id: The IDP account/instance ID. Different from the Harness account ID.</span>
+<span class="sd">    :return: List of items (JSON).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_IDP_API</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">idp_account_id</span><span class="si">}</span><span class="s2">/idp/api/catalog/locations&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching catalog item: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+
+<div class="viewcode-block" id="delete_matching_idp_catalog_ids">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.delete_matching_idp_catalog_ids">[docs]</a>
+<span class="k">def</span> <span class="nf">delete_matching_idp_catalog_ids</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">idp_account_id</span><span class="p">,</span> <span class="n">matching_ids</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterates over matching IDs and deletes them via the API.</span>
+
+<span class="sd">    :param api_key: The API key for accessing Harness API.</span>
+<span class="sd">    :param idp_account_id: The IDP account/instance ID. Different from the Harness account ID.</span>
+<span class="sd">    :param matching_ids: List of IDs to delete.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">location_id</span> <span class="ow">in</span> <span class="n">matching_ids</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempting to delete catalog item with ID: </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HARNESS_IDP_API</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">idp_account_id</span><span class="si">}</span><span class="s2">/idp/api/catalog/locations/</span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>  <span class="c1"># HTTP 204: No Content (successful deletion)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Successfully deleted catalog item with ID: </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Failed to delete catalog item with ID: </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">. Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Error deleting catalog item with ID </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_ids_with_target">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.platform.find_ids_with_target">[docs]</a>
+<span class="k">def</span> <span class="nf">find_ids_with_target</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">search_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds all IDs where the target field contains the specified search string.</span>
+
+<span class="sd">    :param data: List of dictionaries containing target data.</span>
+<span class="sd">    :param search_string: String to search for in the target field.</span>
+<span class="sd">    :return: List of IDs matching the search criteria.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;target&#39;</span><span class="p">]]</span></div>
+
 </pre></div>
 
            </div>
@@ -429,7 +1116,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Joe Titra.</p>
+    <p>&#169; Copyright 2025, Joe Titra.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

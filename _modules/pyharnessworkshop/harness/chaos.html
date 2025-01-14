@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyharnessworkshop.harness.chaos &mdash; pyharnessworkshop 0.1.6 documentation</title>
+  <title>pyharnessworkshop.harness.chaos &mdash; pyharnessworkshop 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=6e0256f3"></script>
+        <script src="../../../_static/documentation_options.js?v=4fa33042"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -42,13 +42,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../harness.chaos.html">harness.chaos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../harness.platform.html">harness.platform package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.auth.html">keycloak.auth package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.user.html">keycloak.user package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.instruqt.html">utils.instruqt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.k8s.html">utils.k8s package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.misc.html">utils.misc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">Harness Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">Keycloak Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils Package</a></li>
 </ul>
 
         </div>
@@ -90,7 +86,13 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="c1"># Standard imports</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="c1"># Third-party imports</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c1"># Library-specific imports</span>
 <span class="kn">from</span> <span class="nn">..utils.misc</span> <span class="kn">import</span> <span class="n">validate_yaml_content</span>
 
 <span class="c1">#### GLOBAL VARIABLES ####</span>
@@ -101,7 +103,7 @@
 
 
 <div class="viewcode-block" id="generate_hce_id">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.generate_hce_id">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.generate_hce_id">[docs]</a>
 <span class="k">def</span> <span class="nf">generate_hce_id</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a probe ID based on the provided name by replacing spaces with underscores and removing dashes.</span>
@@ -114,7 +116,7 @@
 
 
 <div class="viewcode-block" id="supported_api_methods">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.supported_api_methods">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.supported_api_methods">[docs]</a>
 <span class="k">def</span> <span class="nf">supported_api_methods</span><span class="p">(</span><span class="n">request_type</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">request_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the payload for the specified request type.</span>
@@ -166,6 +168,13 @@
                 <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
             <span class="p">}</span>
+        <span class="k">case</span> <span class="s2">&quot;get_experiment_run_report&quot;</span><span class="p">:</span>
+            <span class="n">query_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;getExperimentRunReport&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;experimentRunIDs&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;[String]&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="s2">&quot;{ workflowID updatedAt infra { environmentID infraID name infraType } workflowName workflowDescription workflowTags workflowType isCronEnabled cronSyntax phase resiliencyScore weightages { experimentName weightage } executionData errorResponse}&quot;</span>
+            <span class="p">}</span>
         <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported request type: </span><span class="si">{</span><span class="n">request_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -204,7 +213,7 @@
 
 
 <div class="viewcode-block" id="make_api_call">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.make_api_call">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.make_api_call">[docs]</a>
 <span class="k">def</span> <span class="nf">make_api_call</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">query_type</span><span class="p">,</span> <span class="n">request_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes an API call to the Chaos API with the specified query type and variables.</span>
@@ -240,7 +249,7 @@
 
 
 <div class="viewcode-block" id="register_infra">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.register_infra">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.register_infra">[docs]</a>
 <span class="k">def</span> <span class="nf">register_infra</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">env_id</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Registers infrastructure with the specified details using the Chaos API.</span>
@@ -288,7 +297,7 @@
 
 
 <div class="viewcode-block" id="add_probe">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.add_probe">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.add_probe">[docs]</a>
 <span class="k">def</span> <span class="nf">add_probe</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds a probe to the specified infrastructure using the Chaos API.</span>
@@ -340,7 +349,7 @@
 
 
 <div class="viewcode-block" id="get_manifest_for_infra">
-<a class="viewcode-back" href="../../../harness.chaos.html#pyharnessworkshop.harness.chaos.get_manifest_for_infra">[docs]</a>
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.get_manifest_for_infra">[docs]</a>
 <span class="k">def</span> <span class="nf">get_manifest_for_infra</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">account_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a manifest file for the chaos infrastructure specified using the Chaos API.</span>
@@ -370,6 +379,44 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No infrastructure found with the name &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="parse_experiment_run_report">
+<a class="viewcode-back" href="../../../harness.html#pyharnessworkshop.harness.chaos.parse_experiment_run_report">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_experiment_run_report</span><span class="p">(</span><span class="n">api_response</span><span class="p">):</span>
+    <span class="n">experiment_runs</span> <span class="o">=</span> <span class="n">api_response</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;getExperimentRunReport&#39;</span><span class="p">]</span>
+    
+    <span class="n">parsed_reports</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">experiment_runs</span><span class="p">:</span>
+        <span class="c1"># Parse the executionData JSON string</span>
+        <span class="n">execution_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="s1">&#39;executionData&#39;</span><span class="p">])</span>
+        
+        <span class="n">parsed_report</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;workflowRunID&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowRunID&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;runSequence&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;runSequence&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;notifyID&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;notifyID&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;workflowID&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowID&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;updatedAt&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;updatedAt&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;infra&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;infra&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;workflowName&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowName&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;workflowDescription&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowDescription&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;workflowTags&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowTags&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;workflowType&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;workflowType&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;isCronEnabled&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;isCronEnabled&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;cronSyntax&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;cronSyntax&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;resiliencyScore&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;resiliencyScore&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;updatedBy&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;updatedBy&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;weightages&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;weightages&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;executionData&quot;</span><span class="p">:</span> <span class="n">execution_data</span><span class="p">,</span>
+            <span class="s2">&quot;errorResponse&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">[</span><span class="s1">&#39;errorResponse&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+        
+        <span class="n">parsed_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_report</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">parsed_reports</span></div>
+
 </pre></div>
 
            </div>
@@ -379,7 +426,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Joe Titra.</p>
+    <p>&#169; Copyright 2025, Joe Titra.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

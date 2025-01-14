@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyharnessworkshop.utils.misc &mdash; pyharnessworkshop 0.1.5 documentation</title>
+  <title>pyharnessworkshop.utils.misc &mdash; pyharnessworkshop 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+        <script src="../../../_static/documentation_options.js?v=4fa33042"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -42,9 +42,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">harness package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">keycloak package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../harness.html">Harness Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../keycloak.html">Keycloak Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils Package</a></li>
 </ul>
 
         </div>
@@ -86,16 +86,25 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="c1"># Standard imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pwd</span>
-<span class="kn">import</span> <span class="nn">grp</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">secrets</span>
+
+<span class="c1"># Third-party imports</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># Library-specific imports</span>
+<span class="c1">#   None</span>
+
+<span class="c1">#### GLOBAL VARIABLES ####</span>
+<span class="n">WORKSHOP_REPO</span> <span class="o">=</span> <span class="s2">&quot;harness-community/field-workshops&quot;</span>
 
 <span class="c1"># PYDOC_RETURN_LABEL = &quot;:return:&quot;</span>
 <span class="c1"># PYDOC_FOLLOW_PARAM = &quot;:param bool follow:&quot;</span>
@@ -129,19 +138,13 @@
         <span class="n">download_and_install</span><span class="p">()</span>
 
     <span class="c1"># Setup VS Code</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;/home/harness/.local/share/code-server/User/&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span>
-        <span class="s2">&quot;/home/harness/.local/share&quot;</span><span class="p">,</span>
-        <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pw_uid</span><span class="p">,</span>
-        <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="s2">&quot;harness&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">gr_gid</span>
-    <span class="p">)</span>
-
-    <span class="n">settings_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/settings.json&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;/root/.local/share/code-server/User/&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">settings_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">WORKSHOP_REPO</span><span class="si">}</span><span class="s2">/main/assets/misc/vs_code/settings.json&quot;</span>
     <span class="n">settings_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">settings_url</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/home/harness/.local/share/code-server/User/settings.json&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/root/.local/share/code-server/User/settings.json&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">settings_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 
-    <span class="n">service_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/vs_code/code-server.service&quot;</span>
+    <span class="n">service_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">WORKSHOP_REPO</span><span class="si">}</span><span class="s2">/main/assets/misc/vs_code/code-server.service&quot;</span>
     <span class="n">service_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_url</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/etc/systemd/system/code-server.service&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">service_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
@@ -166,7 +169,7 @@
 <span class="sd">    :param credentials: List of credentials to populate the template</span>
 <span class="sd">    :return: Rendered HTML content as a string</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">template_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jtitra/field-workshops/main/assets/misc/credential_tab_template.html&quot;</span>
+    <span class="n">template_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">WORKSHOP_REPO</span><span class="si">}</span><span class="s2">/main/assets/misc/credential_tab_template.html&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Fetch the HTML template from the URL</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">template_url</span><span class="p">)</span>
@@ -225,15 +228,21 @@
 
 <div class="viewcode-block" id="generate_random_suffix">
 <a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.generate_random_suffix">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_random_suffix</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">generate_random_suffix</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates a random suffix by hashing a random number and taking the first 10 characters.</span>
+<span class="sd">    Generates a random suffix by hashing a random number and taking the first &#39;length&#39; characters.</span>
 
-<span class="sd">    :return: A random suffix string of 10 characters.</span>
+<span class="sd">    :param length: The desired length of the random suffix (default is 10)</span>
+<span class="sd">    :return: A random suffix string of the specified length.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">random_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32767</span><span class="p">)</span>
-    <span class="n">md5_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">random_number</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-    <span class="n">random_suffix</span> <span class="o">=</span> <span class="n">md5_hash</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Length must be a positive integer.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Length must not exceed 15 characters.&quot;</span><span class="p">)</span>
+
+    <span class="n">random_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">sha256_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">random_number</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="n">random_suffix</span> <span class="o">=</span> <span class="n">sha256_hash</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">random_suffix</span></div>
 
 
@@ -299,6 +308,325 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ERROR: The provided YAML is not valid.&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
+
+
+<div class="viewcode-block" id="render_template_from_url">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.render_template_from_url">[docs]</a>
+<span class="k">def</span> <span class="nf">render_template_from_url</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">template_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches a Jinja2 template from a URL and renders it with the provided context.</span>
+
+<span class="sd">    :param context: A dictionary containing the context for rendering the template.</span>
+<span class="sd">    :param template_path: The path in the repo of the Jinja2 template to fetch.</span>
+<span class="sd">    :return: The rendered content as a string, or None if an error occurs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">WORKSHOP_REPO</span><span class="si">}</span><span class="s2">/main/</span><span class="si">{</span><span class="n">template_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">template_url</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">template_content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">template_content</span><span class="p">)</span>
+        <span class="n">rendered_content</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rendered_content</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching the template: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error rendering the template: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="fetch_template_from_url">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.fetch_template_from_url">[docs]</a>
+<span class="k">def</span> <span class="nf">fetch_template_from_url</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches a Jinja2 template from a URL and outputs it to the specified file.</span>
+
+<span class="sd">    :param template_path: The path in the repo of the Jinja2 template to fetch.</span>
+<span class="sd">    :param output_file: A file to output the template to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">WORKSHOP_REPO</span><span class="si">}</span><span class="s2">/main/</span><span class="si">{</span><span class="n">template_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">template_url</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">template_content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">template_content</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching the template: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error rendering the template: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_pipeline">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.parse_pipeline">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pipeline</span><span class="p">(</span><span class="n">yaml_str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a YAML string representing a pipeline configuration and extracts the stages into a dictionary.</span>
+
+<span class="sd">    :param yaml_str: A string containing the YAML representation of the pipeline configuration.</span>
+<span class="sd">    :return: A dictionary with the stage names as keys and their respective details as values. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pipeline_data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_str</span><span class="p">)</span>
+    <span class="n">stages_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">stages</span> <span class="o">=</span> <span class="n">pipeline_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="c1"># Flatten the list of stage and parallel stage</span>
+    <span class="n">flat_stages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">stage_entry</span> <span class="ow">in</span> <span class="n">stages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;stage&quot;</span> <span class="ow">in</span> <span class="n">stage_entry</span><span class="p">:</span>
+            <span class="n">flat_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stage_entry</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="s2">&quot;parallel&quot;</span> <span class="ow">in</span> <span class="n">stage_entry</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">parallel_stage</span> <span class="ow">in</span> <span class="n">stage_entry</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="s2">&quot;stage&quot;</span> <span class="ow">in</span> <span class="n">parallel_stage</span><span class="p">:</span>
+                    <span class="n">flat_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parallel_stage</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">flat_stages</span><span class="p">:</span>
+        <span class="n">stage_name</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">stage_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">stage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">stage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">stage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;spec&quot;</span><span class="p">:</span> <span class="n">stage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="p">}</span>
+        <span class="n">stages_dict</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage_data</span>
+    <span class="k">return</span> <span class="n">stages_dict</span></div>
+
+
+
+<div class="viewcode-block" id="validate_steps_in_stage">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.validate_steps_in_stage">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_steps_in_stage</span><span class="p">(</span><span class="n">stages_dict</span><span class="p">,</span> <span class="n">stage_id</span><span class="p">,</span> <span class="n">step_context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates steps in a given stage type against the provided step context.</span>
+
+<span class="sd">    :param stages_dict: Dictionary containing stages with their details.</span>
+<span class="sd">    :param stage_id: The ID of the stage to filter.</span>
+<span class="sd">    :param step_context: A dictionary of steps and their expected values to validate.</span>
+<span class="sd">    :return: A dictionary of misconfigured_steps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misconfigured_steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">stage_name</span><span class="p">,</span> <span class="n">stage_details</span> <span class="ow">in</span> <span class="n">stages_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">stage_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">stage_type</span> <span class="o">=</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+            <span class="n">execution</span> <span class="o">=</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;execution&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="c1"># Flatten the list of steps and parallel steps</span>
+            <span class="n">flat_steps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">step_entry</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">step_entry</span><span class="p">:</span>
+                    <span class="n">flat_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_entry</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="s2">&quot;parallel&quot;</span> <span class="ow">in</span> <span class="n">step_entry</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">parallel_step</span> <span class="ow">in</span> <span class="n">step_entry</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">parallel_step</span><span class="p">:</span>
+                            <span class="n">flat_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parallel_step</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="s2">&quot;stepGroup&quot;</span> <span class="ow">in</span> <span class="n">step_entry</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">group_step</span> <span class="ow">in</span> <span class="n">step_entry</span><span class="p">[</span><span class="s2">&quot;stepGroup&quot;</span><span class="p">][</span><span class="s2">&quot;steps&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">group_step</span><span class="p">:</span>
+                            <span class="n">flat_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group_step</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+            <span class="c1"># Validate the step context against the found steps</span>
+            <span class="k">for</span> <span class="n">step_key</span><span class="p">,</span> <span class="n">expected_properties</span> <span class="ow">in</span> <span class="n">step_context</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">matching_steps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">flat_steps</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">step_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span>
+                        <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">step_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span>
+                        <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">step_key</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">matching_steps</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39; with type &#39;</span><span class="si">{</span><span class="n">stage_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="n">misconfigured_steps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;step_key&quot;</span><span class="p">:</span> <span class="n">step_key</span><span class="p">,</span>
+                        <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                        <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                        <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39; with type &#39;</span><span class="si">{</span><span class="n">stage_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">})</span>
+                    <span class="k">continue</span>
+                <span class="c1"># Validate the expected properties for each matching step</span>
+                <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">matching_steps</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">prop_key</span><span class="p">,</span> <span class="n">expected_value</span> <span class="ow">in</span> <span class="n">expected_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">actual_value</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_key</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">sub_key</span><span class="p">,</span> <span class="n">sub_expected_value</span> <span class="ow">in</span> <span class="n">expected_value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                                <span class="n">sub_actual_value</span> <span class="o">=</span> <span class="n">actual_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sub_key</span><span class="p">)</span> <span class="k">if</span> <span class="n">actual_value</span> <span class="k">else</span> <span class="kc">None</span>
+                                <span class="k">if</span> <span class="n">sub_actual_value</span> <span class="o">!=</span> <span class="n">sub_expected_value</span><span class="p">:</span>
+                                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mismatch for step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; in property &#39;</span><span class="si">{</span><span class="n">prop_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">sub_expected_value</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="n">sub_actual_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                                    <span class="n">misconfigured_steps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                        <span class="s2">&quot;step_key&quot;</span><span class="p">:</span> <span class="n">step_key</span><span class="p">,</span>
+                                        <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                                        <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                                        <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prop_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">sub_expected_value</span><span class="p">,</span>
+                                        <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">sub_actual_value</span><span class="p">,</span>
+                                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Mismatch for step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; in property &#39;</span><span class="si">{</span><span class="n">prop_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">sub_expected_value</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="n">sub_actual_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                                    <span class="p">})</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">actual_value</span> <span class="o">!=</span> <span class="n">expected_value</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mismatch for step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; in property &#39;</span><span class="si">{</span><span class="n">prop_key</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">expected_value</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                                <span class="n">misconfigured_steps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s2">&quot;step_key&quot;</span><span class="p">:</span> <span class="n">step_key</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                                    <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="n">prop_key</span><span class="p">,</span>
+                                    <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">expected_value</span><span class="p">,</span>
+                                    <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">actual_value</span><span class="p">,</span>
+                                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Mismatch for step &#39;</span><span class="si">{</span><span class="n">step_key</span><span class="si">}</span><span class="s2">&#39; in property &#39;</span><span class="si">{</span><span class="n">prop_key</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">expected_value</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                                <span class="p">})</span>
+    <span class="k">return</span> <span class="n">misconfigured_steps</span></div>
+
+
+
+<div class="viewcode-block" id="validate_stage_configuration">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.validate_stage_configuration">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_stage_configuration</span><span class="p">(</span><span class="n">stages_dict</span><span class="p">,</span> <span class="n">stage_id</span><span class="p">,</span> <span class="n">stage_context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates the configuration of a given stage against the provided stage context.</span>
+
+<span class="sd">    :param stages_dict: Dictionary containing stages with their details.</span>
+<span class="sd">    :param stage_id: The ID of the stage to filter.</span>
+<span class="sd">    :param stage_context: A dictionary of stage configurations and their expected values to validate.</span>
+<span class="sd">    :return: A list of mismatches, where each mismatch is a dictionary containing the path and details of the discrepancy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mismatches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">stage_name</span><span class="p">,</span> <span class="n">stage_details</span> <span class="ow">in</span> <span class="n">stages_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">stage_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">stage_type</span> <span class="o">=</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">expected_value</span> <span class="ow">in</span> <span class="n">stage_context</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stage_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="p">{}):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                        <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                        <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">expected_value</span><span class="p">,</span>
+                        <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Configuration &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">actual_value</span> <span class="o">=</span> <span class="n">stage_details</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">sub_key</span><span class="p">,</span> <span class="n">sub_expected_value</span> <span class="ow">in</span> <span class="n">expected_value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">sub_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_value</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                                <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                                    <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">sub_expected_value</span><span class="p">,</span>
+                                    <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Configuration key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39; not found in stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                                <span class="p">})</span>
+                            <span class="k">elif</span> <span class="n">actual_value</span><span class="p">[</span><span class="n">sub_key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sub_expected_value</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mismatch in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">sub_expected_value</span><span class="si">}</span><span class="s2">&#39;, found &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sub_key</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                                <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                                    <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">sub_expected_value</span><span class="p">,</span>
+                                    <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">actual_value</span><span class="p">[</span><span class="n">sub_key</span><span class="p">],</span>
+                                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Mismatch in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub_key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">sub_expected_value</span><span class="si">}</span><span class="s2">&#39;, found &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sub_key</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                                <span class="p">})</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">expected_value</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_value</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected list item &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; not found in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                                <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                                    <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                                    <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">,</span>
+                                    <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Expected list item &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; not found in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                                <span class="p">})</span>
+                    <span class="k">elif</span> <span class="n">actual_value</span> <span class="o">!=</span> <span class="n">expected_value</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mismatch in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">expected_value</span><span class="si">}</span><span class="s2">&#39;, found &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                        <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;stage_name&quot;</span><span class="p">:</span> <span class="n">stage_name</span><span class="p">,</span>
+                            <span class="s2">&quot;stage_type&quot;</span><span class="p">:</span> <span class="n">stage_type</span><span class="p">,</span>
+                            <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">expected_value</span><span class="p">,</span>
+                            <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">actual_value</span><span class="p">,</span>
+                            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Mismatch in &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; for stage &#39;</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&#39;: expected &#39;</span><span class="si">{</span><span class="n">expected_value</span><span class="si">}</span><span class="s2">&#39;, found &#39;</span><span class="si">{</span><span class="n">actual_value</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                        <span class="p">})</span>
+    <span class="k">return</span> <span class="n">mismatches</span></div>
+
+
+
+<div class="viewcode-block" id="get_stage_identifier_from_dict">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.get_stage_identifier_from_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">get_stage_identifier_from_dict</span><span class="p">(</span><span class="n">pipeline_dict</span><span class="p">,</span> <span class="n">stage_type</span><span class="p">,</span> <span class="n">service_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the identifier of a stage based on the stage type and an optional service name.</span>
+
+<span class="sd">    :param pipeline_dict: Dictionary containing stages with their details.</span>
+<span class="sd">    :param stage_type: The type of the stage to filter.</span>
+<span class="sd">    :param service_name: (Optional) The name of the service to filter within the stage type.</span>
+<span class="sd">    :return: The identifier of the matching stage, or None if no match is found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pipeline_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">stage_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">service_name</span><span class="p">:</span>
+                <span class="n">service_ref</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spec&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;service&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;serviceRef&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">service_ref</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">service_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="validate_password">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.validate_password">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate that the password contains at least one of each required character type.</span>
+
+<span class="sd">    :param password: str, the password to validate</span>
+<span class="sd">    :param upper: str, uppercase character pool</span>
+<span class="sd">    :param lower: str, lowercase character pool</span>
+<span class="sd">    :param digits: str, digit character pool</span>
+<span class="sd">    :return: bool, True if the password is valid, otherwise False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">any</span><span class="p">(</span><span class="n">char</span> <span class="ow">in</span> <span class="n">upper</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">password</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="nb">any</span><span class="p">(</span><span class="n">char</span> <span class="ow">in</span> <span class="n">lower</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">password</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="nb">any</span><span class="p">(</span><span class="n">char</span> <span class="ow">in</span> <span class="n">digits</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">password</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_password">
+<a class="viewcode-back" href="../../../utils.html#pyharnessworkshop.utils.misc.generate_password">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_password</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random password with the specified length.</span>
+
+<span class="sd">    :param length: int, length of the password (default is 12)</span>
+<span class="sd">    :return: str, randomly generated password</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Password length must be at least 4 to include all character types.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Password length must not exceed 50 characters to avoid performance issues.&quot;</span><span class="p">)</span>
+
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="n">all_characters</span> <span class="o">=</span> <span class="n">upper</span> <span class="o">+</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">digits</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">upper</span><span class="p">),</span>
+            <span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">lower</span><span class="p">),</span>
+            <span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">digits</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">password</span> <span class="o">+=</span> <span class="p">[</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_characters</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">password</span><span class="p">))]</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>  <span class="c1"># Shuffle the password to make it random</span>
+        <span class="k">if</span> <span class="n">validate_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">password</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -308,7 +636,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Joe Titra.</p>
+    <p>&#169; Copyright 2025, Joe Titra.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
