@@ -506,3 +506,94 @@ def generate_password(length=12):
         random.shuffle(password)  # Shuffle the password to make it random
         if validate_password(password, upper, lower, digits):
             return ''.join(password)
+
+
+def validate_workspace_configuration(workspace_config, workspace_context):
+    """
+    Validates the workspace configuration against the provided workspace context.
+
+    :param workspace_config: Dictionary containing the workspace configuration details.
+    :param workspace_context: A dictionary of expected workspace configurations and their expected values.
+    :return: A list of mismatches, where each mismatch is a dictionary containing the path and details 
+             of the discrepancy.
+    """
+    mismatches = []
+
+    def compare_values(path, expected, actual):
+        local_mismatches = []
+        # Handle dictionary values recursively.
+        if isinstance(expected, dict):
+            if not isinstance(actual, dict):
+                local_mismatches.append({
+                    "path": path,
+                    "expected": expected,
+                    "actual": actual,
+                    "message": f"Expected a dictionary at '{path}', but found {type(actual).__name__}."
+                })
+            else:
+                for sub_key, sub_expected in expected.items():
+                    new_path = f"{path}.{sub_key}" if path else sub_key
+                    if sub_key not in actual:
+                        local_mismatches.append({
+                            "path": new_path,
+                            "expected": sub_expected,
+                            "actual": None,
+                            "message": f"Configuration key '{new_path}' not found in workspace."
+                        })
+                    else:
+                        sub_actual = actual[sub_key]
+                        local_mismatches.extend(compare_values(new_path, sub_expected, sub_actual))
+        # Handle lists by checking that each expected item exists in the actual list.
+        elif isinstance(expected, list):
+            if not isinstance(actual, list):
+                local_mismatches.append({
+                    "path": path,
+                    "expected": expected,
+                    "actual": actual,
+                    "message": f"Expected a list at '{path}', but found {type(actual).__name__}."
+                })
+            else:
+                for item in expected:
+                    if item not in actual:
+                        local_mismatches.append({
+                            "path": path,
+                            "expected": item,
+                            "actual": None,
+                            "message": f"Expected list item '{item}' not found in '{path}'."
+                        })
+        # For simple types, compare directly (with special handling for booleans represented as strings).
+        else:
+            if isinstance(actual, bool) and isinstance(expected, str):
+                # Convert the expected value to a boolean.
+                expected_bool = True if expected.lower() == "true" else False
+                if actual != expected_bool:
+                    local_mismatches.append({
+                        "path": path,
+                        "expected": expected_bool,
+                        "actual": actual,
+                        "message": f"Mismatch in '{path}': expected '{expected_bool}', found '{actual}'."
+                    })
+            elif actual != expected:
+                local_mismatches.append({
+                    "path": path,
+                    "expected": expected,
+                    "actual": actual,
+                    "message": f"Mismatch in '{path}': expected '{expected}', found '{actual}'."
+                })
+
+        return local_mismatches
+
+    # Iterate over every expected key in the workspace_context.
+    for key, expected_value in workspace_context.items():
+        if key not in workspace_config:
+            mismatches.append({
+                "path": key,
+                "expected": expected_value,
+                "actual": None,
+                "message": f"Configuration '{key}' not found in workspace."
+            })
+        else:
+            actual_value = workspace_config[key]
+            mismatches.extend(compare_values(key, expected_value, actual_value))
+
+    return mismatches

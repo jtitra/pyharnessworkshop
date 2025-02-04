@@ -940,3 +940,86 @@ def find_ids_with_target(data, search_string):
     :return: List of IDs matching the search criteria.
     """
     return [item['data']['id'] for item in data if search_string in item['data']['target']]
+
+
+def list_workspaces(api_key, account_id, org_id, project_id):
+    """
+    Lists all workspaces in the provided Harness project.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :return: A JSON response containing the list of workspaces.
+    """
+    url = f"{HARNESS_API}/iacm/api/orgs/{org_id}/projects/{project_id}/workspaces"
+    headers = {
+        "Content-Type": "application/json",
+        "Harness-Account": f"{account_id}",
+        "x-api-key": api_key
+    }
+
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()  # Raises HTTPError if the response status is 4xx/5xx
+        json_response = response.json()
+        return json_response
+    except requests.exceptions.HTTPError as http_err:
+        raise SystemError(f"HTTP error occurred: {http_err}")
+    except Exception as err:
+        raise SystemError(f"Other error occurred: {err}")
+
+
+def get_workspace_by_id(json_response, workspace_id):
+    """
+    Retrieves a workspace from the provided JSON response by its identifier.
+
+    :param json_response: The JSON response containing the list of workspaces.
+    :param workspace_id: The identifier of the workspace to retrieve.
+    :return: The workspace data if found, otherwise None.
+    """
+    content = json_response
+    if len(content) == 1:
+        print("Project only contains a single workspace.")
+        identifier = content[0].get("identifier")
+        print(f"Single workspace identifier: {identifier}")
+        return content[0]
+    elif len(content) > 1:
+        print("Project contains multiple workspaces.")
+        target_workspace = None
+        for workspace in content:
+            if workspace.get("identifier", "").lower() == workspace_id.lower():
+                target_workspace = workspace
+                break
+        if target_workspace:
+            print(f"Found workspace: {target_workspace.get('identifier')}")
+            return target_workspace
+        else:
+            print(f"No workspace with identifier '{workspace_id}' found.")
+            return None
+
+
+def get_workspace_detail(api_key, account_id, org_id, project_id, workspace_id):
+    """
+    Retrieves the YAML content of a specified Harness workspace.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param workspace_id: The identifier of the workspace to retrieve.
+    :return: The details of the workspace.
+    """
+    url = f"{HARNESS_API}/iacm/api/orgs/{org_id}/projects/{project_id}/workspaces/{workspace_id}"
+    headers = {
+        "Harness-Account": f"{account_id}",
+        "x-api-key": api_key
+    }
+    response = requests.get(url, headers=headers)
+    response_code = response.status_code
+    if 200 <= response_code < 300:
+        return response.json()
+    else:
+        print(f"ERROR: Request failed. Status Code: {response_code}")
+        print(f"Response Content: {response.content.decode('utf-8')}")
+        return None
