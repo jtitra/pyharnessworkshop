@@ -21,9 +21,11 @@ from urllib.parse import quote
 # Third-party imports
 import requests
 import jinja2
+from kubernetes import config
 
 # Library-specific imports
 from ..utils.misc import validate_yaml_content
+from ..utils.k8s import apply_k8s_manifests
 
 #### GLOBAL VARIABLES ####
 HARNESS_API = "https://app.harness.io"
@@ -508,6 +510,52 @@ def deploy_harness_delegate(api_key, account_id, org_id, project_id, template_pa
         subprocess.run(["kubectl", "apply", "-f", output_file], check=True)
     except subprocess.CalledProcessError:
         print("  ERROR: Failed to apply the provided YAML.")
+
+
+def deploy_harness_delegate_v2(api_key, account_id, org_id, project_id, template_path, delegate_name, workshop_type):
+    """
+    Deploys a Harness delegate using the provided template.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param org_id: The organization ID in Harness.
+    :param project_id: The project ID in Harness.
+    :param template_path: The path to the delegate template file.
+    :param delegate_name: The name to assign to the delegate.
+    """
+    input_path = Path(template_path)
+    output_file = f"{input_path.parent}/harness-delegate.yaml"
+    delegate_image = get_latest_delegate_tag(api_key, account_id)
+    delegate_token = generate_delegate_token(api_key, account_id, org_id, project_id, f"{delegate_name}-token")
+    with open(template_path, "r") as file:
+        template = jinja2.Template(file.read())
+    rendered_content = template.render(
+        delegate_name=delegate_name,
+        delegate_namespace=project_id,
+        account_id=account_id,
+        delegate_token=delegate_token,
+        delegate_image=delegate_image
+    )
+    with open(output_file, 'w') as file:
+        file.write(rendered_content)
+    with open(output_file, 'r') as file:
+        validate_yaml_content(file)
+    try:
+        # Set K8s context
+        contexts, active_context = config.list_kube_config_contexts()
+        gke_context = next(ctx for ctx in contexts if ctx['name'].startswith(f'{workshop_type}'))['name']
+        config.load_kube_config(context=gke_context)
+
+        # Apply manifests
+        apply_k8s_manifests([output_file], project_id)
+    except FileNotFoundError:
+        print("  ERROR: Kubernetes configuration file not found. Please ensure the kubeconfig file exists.")
+    except config.ConfigException as e:
+        print(f"  ERROR: Invalid Kubernetes configuration: {str(e)}")
+    except StopIteration:
+        print(f"  ERROR: No GKE context found starting with '{workshop_type}'. Check your cluster setup.")
+    except Exception as e:
+        print(f"  ERROR: Failed to apply the provided YAML. Unexpected error: {str(e)}")
 
 
 def generate_delegate_token(api_key, account_id, org_id, project_id, token_name):
