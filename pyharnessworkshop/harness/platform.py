@@ -1023,3 +1023,69 @@ def get_workspace_detail(api_key, account_id, org_id, project_id, workspace_id):
         print(f"ERROR: Request failed. Status Code: {response_code}")
         print(f"Response Content: {response.content.decode('utf-8')}")
         return None
+
+
+def get_all_idp_scorecards(api_key, account_id):
+    """
+    Retrieves all items from the IDP catalog.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :return: List of items (JSON).
+    """
+    url = f"{HARNESS_API}/gateway/v1/scorecards/?account={account_id}"
+    headers = {
+        "x-api-key": api_key
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Error fetching catalog item: {e}")
+        return []
+
+
+def find_idp_scorecard_matches(data, scorecard_name):
+    """
+    Find IDP scorecards matching a given name from a list of scorecards.
+
+    :param data: List of dictionaries containing scorecard information
+    :param scorecard_name: Name to search for in scorecard name or identifier
+    :return: List of matching scorecard dictionaries
+    """
+    matches = []
+    for item in data:
+        scorecard = item.get("scorecard", {})
+        if (scorecard.get("name") == scorecard_name or scorecard.get("identifier") == scorecard_name):
+            match_info = {
+                "name": scorecard.get("name"),
+                "identifier": scorecard.get("identifier")
+            }
+            matches.append(match_info)
+    return matches
+
+
+def delete_idp_scorecard(api_key, account_id, matching_ids):
+    """
+    Iterates over matching IDs and deletes them via the API.
+
+    :param api_key: The API key for accessing Harness API.
+    :param account_id: The account ID in Harness.
+    :param matching_ids: List of scorecards to delete.
+    """
+    for scorecard in matching_ids:
+        scorecard_id = scorecard.get("identifier")
+        print(f"Attempting to delete scorecard item with name: {scorecard_id}")
+        url = f"{HARNESS_API}/gateway/v1/scorecards/{scorecard_id}?account={account_id}"
+        headers = {
+            "x-api-key": api_key
+        }
+        try:
+            response = requests.delete(url, headers=headers)
+            if response.status_code == 204:  # HTTP 204: No Content (successful deletion)
+                print(f"  Successfully deleted scorecard item with name: {scorecard_id}")
+            else:
+                print(f"  Failed to delete scorecard item with name: {scorecard_id}. Status code: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"  Error deleting scorecard item with name {scorecard_id}: {e}")
