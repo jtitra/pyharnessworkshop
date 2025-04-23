@@ -80,7 +80,31 @@ def setup_vs_code(service_port, code_server_directory):
     service_content = service_content.replace("EXAMPLEDIRECTORY", code_server_directory)
 
     create_systemd_service(service_content, "code-server")
-    subprocess.run(["code-server", "--install-extension", "hashicorp.terraform"], check=True)
+
+
+def install_vscode_extensions(extensions):
+    """
+    Install multiple VS Code extensions using code-server.
+
+    :param extensions: List of extension IDs (e.g., ['hashicorp.terraform', 'ms-python.python'])
+    :return: True if all extensions installed successfully, False otherwise
+    """
+    success = True
+    for extension in extensions:
+        try:
+            subprocess.run(["code-server", "--install-extension", extension], check=True)
+            print(f"{extension} extension installed successfully")
+        except subprocess.CalledProcessError as e:
+            print(f"Error installing {extension} extension: {e}")
+            success = False
+        except FileNotFoundError:
+            print("code-server not found. Ensure code-server is installed and accessible")
+            success = False
+        except Exception as e:
+            print(f"Unexpected error installing {extension}: {e}")
+            success = False
+
+    return success
 
 
 def generate_credentials_html(credentials):
